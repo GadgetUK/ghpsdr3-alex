@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <string.h>
 
 #ifdef __linux__
 #include <sys/socket.h>
@@ -37,10 +38,9 @@
 #include <pthread.h>
 #include <unistd.h>
 #else
+#include <winsock.h>
 #include "pthread.h"
 #endif
-
-#include <string.h>
 
 #include "client.h"
 #include "receiver.h"
@@ -98,7 +98,7 @@ void* client_thread(void* arg) {
     closesocket(client->socket);
 #endif
 
-    fprintf(stderr,"Clint Handler: Client disconnected: %s:%d\n",inet_ntoa(client->address.sin_addr),ntohs(client->address.sin_port));
+    fprintf(stderr,"Client Handler: Client disconnected: %s:%d\n",inet_ntoa(client->address.sin_addr),ntohs(client->address.sin_port));
 
     free(client);
     return 0;
@@ -225,7 +225,13 @@ const char* parse_command(CLIENT* client,char* command) {
     return INVALID_COMMAND;
 }
 
-//The audio thread, consuming audio returned by the client
+/* 
+ * The audio thread, consuming audio transferred by the dspserver.
+ * 
+ * The audio can be used to modulate the carrier or can be diverted to
+ * the local audio card (for testing purposes), depending on the
+ * command line option.
+ */ 
 void* audio_thread(void* arg) {
     CLIENT *client=(CLIENT*)arg;
     RECEIVER *rx=&receiver[client->receiver];
@@ -276,10 +282,8 @@ void* audio_thread(void* arg) {
             exit(1);
         }
 
-        if (usrp_get_server_audio() == 1) {
-		    //process_ozy_output_buffer(rx->output_buffer,&rx->output_buffer[BUFFER_SIZE],client->mox);	
-		    usrp_process_output_buffer(rx->output_buffer,&rx->output_buffer[BUFFER_SIZE],client->mox);			
-		}
+        usrp_process_audio_buffer(rx->output_buffer,&rx->output_buffer[BUFFER_SIZE], client->mox);			
+
 		
     }
 }

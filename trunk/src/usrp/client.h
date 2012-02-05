@@ -24,11 +24,6 @@
 *
 */
 
-#ifndef __linux__
-#include <winsock.h>
-#include "pthread.h"
-#endif
-
 #define AUDIO_PORT 15000
 
 typedef enum {

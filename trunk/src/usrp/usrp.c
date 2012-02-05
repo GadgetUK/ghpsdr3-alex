@@ -46,7 +46,6 @@
 #include "client.h"
 #include "receiver.h"
 #include "usrp.h"
-//#include "usrp_audio.h" not for now
 
 //RX output sample rate from USRP
 #define USRP_RX_SAMPLERATE 256000
@@ -311,6 +310,11 @@ void *usrp_receiver_thread (void *param)
     } done_loop:
 	std::cerr << "Exiting USRP receiver thread" << std::endl;
 
+    return 0;
+}
+
+//Transmitting audio to modulation
+int usrp_process_tx_modulation(float *ch1,  float *ch2, int mox) {
     return 0;
 }
 
