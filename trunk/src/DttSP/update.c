@@ -391,6 +391,23 @@ SetTXCompandSt (unsigned int thread, BOOLEAN setit)
 	sem_post(&top[thread].sync.upd.sem);
 }
 
+DttSP_EXP void  // (NR0V) added
+SetTXCompressorSt (unsigned int thread, BOOLEAN setit)
+{
+        sem_wait(&top[thread].sync.upd.sem);
+        tx[thread].compressor.flag = setit;
+        sem_post(&top[thread].sync.upd.sem);
+}
+
+DttSP_EXP void  // (NR0V) added
+SetTXCompressor (unsigned int thread, double setit)
+{
+        sem_wait(&top[thread].sync.upd.sem);
+        tx[thread].compressor.gen->gain = (float)pow (10.0, setit / 20.0);
+        sem_post(&top[thread].sync.upd.sem);
+}
+
+
 DttSP_EXP void
 SetTXCompand (unsigned int thread, double setit)
 {
