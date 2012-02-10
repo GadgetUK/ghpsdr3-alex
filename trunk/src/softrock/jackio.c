@@ -251,7 +251,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				//put right stuff to read rb here.
 				if ( jack_ringbuffer_read_space (rb_left[r]) >= size )
 				{
-					jack_ringbuffer_read (rb_left[r], (void *)sample_buffer_left[r], size);
+					jack_ringbuffer_read (rb_left[r], (char *)sample_buffer_left[r], size);
 				}
 				else
 				{
@@ -260,7 +260,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				
 				if ( jack_ringbuffer_read_space (rb_right[r]) >= size )
 				{
-					jack_ringbuffer_read (rb_right[r], (void *)sample_buffer_right[r], size); //(void *) will fix the warning.  Better check it first.
+					jack_ringbuffer_read (rb_right[r], (char *)sample_buffer_right[r], size); 
 				}
 				else
 				{
@@ -280,7 +280,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 #else  // use ringbuffers
 				if ( jack_ringbuffer_read_space (rb_left[r]) >= size )
 				{
-					jack_ringbuffer_read (rb_left[r], (void *)sample_buffer_right[r], size);
+					jack_ringbuffer_read (rb_left[r], (char *)sample_buffer_right[r], size);
 				}
 				else
 				{
@@ -289,7 +289,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				
 				if ( jack_ringbuffer_read_space (rb_right[r]) >= size )
 				{
-					jack_ringbuffer_read (rb_right[r], (void *)sample_buffer_left[r], size); //(void *) will fix the warning.  Better check it first.
+					jack_ringbuffer_read (rb_right[r], (char *)sample_buffer_left[r], size); 
 				}
 				else
 				{
