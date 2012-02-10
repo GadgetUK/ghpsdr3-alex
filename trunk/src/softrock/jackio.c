@@ -218,10 +218,8 @@ int process(jack_nframes_t number_of_frames, void* arg)
 		// Now do the tx part (send output IQ data from the dspserver client to
 		// the audio out jacks.
 		if (softrock_get_client_active_rx (r) > 0) {
-
 			int size = sizeof(float)*number_of_frames;
 			//fprintf(stderr,"Made it to read tx\n");
-
 			sample_buffer_left[r] = 
 				(jack_default_audio_sample_t *) jack_port_get_buffer(audio_output_port_left[r], number_of_frames);
 			sample_buffer_right[r] = 
@@ -257,7 +255,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				}
 				else
 				{
-					//fprintf(stderr, "No space left to write in jack ringbuffers (left).\n");
+					fprintf(stderr, "No space left to read in jack ringbuffers (left).\n");
 				}
 				
 				if ( jack_ringbuffer_read_space (rb_right[r]) >= size )
@@ -266,18 +264,18 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				}
 				else
 				{
-					//fprintf(stderr, "No space left to write in jack ringbuffers (right).\n");
+					fprintf(stderr, "No space left to read in jack ringbuffers (right).\n");
 				}
 #endif
 				} else { // qi instead of iq
 #ifdef USE_PIPES
 					bytes_read = read(*softrock_get_jack_read_pipe_left(r),sample_buffer_right[r],size);
 					if (bytes_read  != size) {
-						//fprintf(stderr,"There was a problem reading from the right pipe.  Read %d bytes.\n", bytes_read);
+						fprintf(stderr,"There was a problem reading from the right pipe.  Read %d bytes.\n", bytes_read);
 					}
 					bytes_read = read(*softrock_get_jack_read_pipe_right(r),sample_buffer_left[r],size);
 					if (bytes_read != size) {
-						//fprintf(stderr,"There was a problem reading from the right pipe.  Read %d bytes.\n", bytes_read);
+						fprintf(stderr,"There was a problem reading from the right pipe.  Read %d bytes.\n", bytes_read);
 					}
 #else  // use ringbuffers
 				if ( jack_ringbuffer_read_space (rb_left[r]) >= size )
@@ -286,7 +284,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				}
 				else
 				{
-					fprintf(stderr, "No space left to write in jack ringbuffers (left).\n");
+					fprintf(stderr, "No space left to read in jack ringbuffers (left).\n");
 				}
 				
 				if ( jack_ringbuffer_read_space (rb_right[r]) >= size )
@@ -295,7 +293,7 @@ int process(jack_nframes_t number_of_frames, void* arg)
 				}
 				else
 				{
-					//fprintf(stderr, "No space left to write in jack ringbuffers (right).\n");
+					fprintf(stderr, "No space left to read in jack ringbuffers (right).\n");
 				}
 #endif
 				}
