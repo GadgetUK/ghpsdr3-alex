@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.Display;
 import android.view.ViewGroup.LayoutParams;
@@ -59,7 +60,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 			mGLSurfaceView.setEGLContextClientVersion(2);
 			renderer = new Renderer(this);
 			mGLSurfaceView.setRenderer(renderer);
-			mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+			//mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		} 
 		else { // quit if no support - get a better phone! :P
 			this.finish();
@@ -95,9 +96,18 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		spectrumView = new SpectrumView(this, width, height/2, connection);
 		spectrumView.setRenderer(renderer);
 			
-		
-		setContentView(spectrumView);
+		//setContentView(spectrumView);
 		//setContentView(mGLSurfaceView);
+		
+		LinearLayout ll = new LinearLayout(this);
+		spectrumView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+		ll.addView(spectrumView);
+		mGLSurfaceView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+		ll.addView(mGLSurfaceView);
+		
+		setContentView(ll);
 		
 		setTitle("aHPSDR: "+server+" (rx"+receiver+")");
         
