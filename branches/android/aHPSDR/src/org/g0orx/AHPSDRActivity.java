@@ -22,11 +22,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.Display;
+import android.view.ViewGroup.LayoutParams;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.media.AudioManager;
 import java.io.BufferedInputStream;
@@ -36,6 +39,7 @@ import java.net.URLConnection;
 import org.apache.http.util.ByteArrayBuffer;
 import java.util.Vector;
 import android.util.DisplayMetrics;
+
 public class AHPSDRActivity extends Activity implements SensorEventListener {
 	/** Called when the activity is first created. */
 	
@@ -90,6 +94,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 
 		spectrumView = new SpectrumView(this, width, height/2, connection);
 		spectrumView.setRenderer(renderer);
+			
 		
 		setContentView(spectrumView);
 		//setContentView(mGLSurfaceView);

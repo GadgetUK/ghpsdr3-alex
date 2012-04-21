@@ -47,6 +47,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private Shader shader;
 	private int _program;
 	private float _cy;
+	private int cy;
 	private float _LO_offset;
 	private float _width = (float)640 / MAX_CL_WIDTH;
 	private float _waterfallLow;
@@ -87,12 +88,13 @@ class Renderer implements GLSurfaceView.Renderer {
 	 *****************************/
 	
 	public void set_cy(int cy){
+		this.cy = cy;
 		_cy = cy;
 		GLES20.glUniform1f(cy_location, _cy);
 	}
 	
 	public void set_width(int width){
-		_width = width;
+		_width = (float)width/MAX_CL_WIDTH;
 		GLES20.glUniform1f(width_location, _width);
 	}
 	
@@ -129,11 +131,11 @@ class Renderer implements GLSurfaceView.Renderer {
 		            -0.5f, 0.5f, 0.0f, // Position 0
 		            0.0f, 0.0f, // TexCoord 0
 		            -0.5f, -0.5f, 0.0f, // Position 1
-		            0.0f, _width, // TexCoord 1
+		            0.0f, 1.0f, // TexCoord 1
 		            0.5f, -0.5f, 0.0f, // Position 2
-		            1.0f, _width, // TexCoord 2
+		            _width, 1.0f, // TexCoord 2
 		            0.5f, 0.5f, 0.0f, // Position 3
-		            1.0f, 0.0f // TexCoord 3
+		            _width, 0.0f // TexCoord 3
 		    };
 		
 	    FloatBuffer mVertices;
@@ -221,16 +223,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
 	private int createTexture2D(){
 		int[] textureId = new int[1];
-	       // 2x2 Image, 4 bytes per pixel (R, G, B, A)
-        byte[] pixels = 
-            {  
-                127,   0,   0, 127, // Red
-                0, 127,   0, 127, // Green
-                0,   0, 127, 127, // Blue
-                127, 127, 0,  127  // Yellow
-            };
-        ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(4*4);
-        pixelBuffer.put(pixels).position(0);
+        ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * MAX_CL_HEIGHT * 4);
 
         // Use tightly packed data
         GLES20.glPixelStorei ( GLES20.GL_UNPACK_ALIGNMENT, 1 );
@@ -242,15 +235,29 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, textureId[0] );
 
         //  Load the texture
-        GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 2, 2, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
+        GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, MAX_CL_WIDTH, 
+        		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
 
         // Set the filtering mode
-        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST );
-        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST );
+        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR );
+        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR );
+        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE );
+        GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE );
 
 		return textureId[0];
 	}
 	
+	public void plotWaterfall(int[] samples) {
+		IntBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+		for (int i = 0; i < samples.length; i++){
+			int sample = samples[i];
+			sample = sample << 24 + sample << 16 + sample << 8 + sample;
+			pixelBuffer.put(i, samples[i]);
+		}
+		pixelBuffer.position(0);
+		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
+				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+	}
 	
 	// debugging opengl
 	private void checkGlError(String op) {

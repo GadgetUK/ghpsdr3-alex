@@ -264,12 +264,14 @@ Log.i("SpectrumView","width="+width+" height="+height);
 		waterfallLow=(average/WIDTH)-5;
 		waterfallHigh=waterfallLow+55;
 		
-		renderer.set_cy(cy);
-		renderer.set_width(WIDTH);
-		renderer.set_LO_offset(0);
-		renderer.set_waterfallHigh(waterfallHigh);
-		renderer.set_waterfallLow(waterfallLow);
-		
+		if (renderer != null){
+			renderer.set_cy(cy);
+			renderer.set_width(WIDTH);
+			renderer.set_LO_offset(0);
+			renderer.set_waterfallHigh(waterfallHigh);
+			renderer.set_waterfallLow(waterfallLow);
+			renderer.plotWaterfall(samples);
+		}
 		
 		this.postInvalidate();
 	}
