@@ -229,7 +229,8 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int createTexture2D(){
 		int[] textureId = new int[1];
         ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * MAX_CL_HEIGHT * 4);
-
+        pixelBuffer.position(0);
+        
         // Use tightly packed data
         GLES20.glPixelStorei ( GLES20.GL_UNPACK_ALIGNMENT, 1 );
 	    checkGlError("glPixelStorei");
