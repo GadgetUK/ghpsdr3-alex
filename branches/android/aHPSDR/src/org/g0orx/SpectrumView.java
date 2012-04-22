@@ -271,7 +271,8 @@ Log.i("SpectrumView","width="+width+" height="+height);
 		
 		
 		if (renderer != null && mGLSurfaceView != null){
-			
+			final int[] f_samples = new int[samples.length];
+			System.arraycopy(samples, 0, f_samples, 0, samples.length);
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering
                 // thread:
@@ -281,7 +282,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
         			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
         			renderer.set_waterfallHigh(waterfallHigh);
         			renderer.set_waterfallLow(waterfallLow);	
-        			renderer.plotWaterfall();
+        			renderer.plotWaterfall(f_samples);
                 }
             });
 		}

@@ -254,13 +254,10 @@ class Renderer implements GLSurfaceView.Renderer {
 		return textureId[0];
 	}
 	
-	public void setSample(int i, int sample){
-		int value = sample << 24 + sample << 16 + sample << 8 + sample;
-		pixelBuffer.put(i, value);
-	}
 	
-	public void plotWaterfall() {
+	public void plotWaterfall(final int[] samples) {
 		pixelBuffer.position(0);
+		pixelBuffer.put(samples).position(0);
 		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
 				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
 	    checkGlError("glTexSubImage2D");
