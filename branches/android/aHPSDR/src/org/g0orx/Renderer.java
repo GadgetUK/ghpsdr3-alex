@@ -89,8 +89,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void set_cy(int cy){
 		this.cy = cy;
-		_cy = cy;
-		GLES20.glUniform1f(cy_location, _cy);
+		_cy = (float)cy / MAX_CL_HEIGHT;
 	}
 	
 	public void set_width(int width){

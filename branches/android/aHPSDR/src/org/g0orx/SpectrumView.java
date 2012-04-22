@@ -37,7 +37,8 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			}
 		}
 		
-		cy = HEIGHT - 1;
+		//cy = HEIGHT - 1;
+		cy = MAX_CL_HEIGHT - 1;
 		average=waterfallLow;
 		this.setOnTouchListener(this);
 
@@ -133,14 +134,14 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			paint.setColor(Color.WHITE);
 			canvas.drawLines(points, paint);
 
-			
+			/*
 			// draw the waterfall
 			{
 				Bitmap subBitmap = Bitmap.createBitmap(waterfall, 0, cy, WIDTH, HEIGHT);
 				canvas.drawBitmap(subBitmap, 1, HEIGHT, paint);
 
 			}
-			
+			*/
 			
 			// draw the S-Meter
 			int dbm=connection.getMeter();
@@ -210,7 +211,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 
 		this.offset=offset;
 		
-		
+		/*
 		// scroll the waterfall down
 		if(waterfall.isRecycled()) {
 			waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
@@ -220,12 +221,14 @@ Log.i("SpectrumView","width="+width+" height="+height);
 					waterfall.setPixel(x, y, Color.BLACK);
 				}
 			}
+			
 			cy = HEIGHT - 1;
 		}
-		
+		*/
 		//waterfall.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT - 1);
 		//waterfall.setPixels(pixels, 0, WIDTH, 0, 1, WIDTH, HEIGHT - 1);
-		if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		//if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
 
 		int p = 0;
 		float sample;
@@ -248,10 +251,11 @@ Log.i("SpectrumView","width="+width+" height="+height);
 
 			points[p++] = (float) i;
 			points[p++] = sample;
-
+			/*
 			int pixel_value = calculatePixel(samples[i]);
 			waterfall.setPixel(i, cy, pixel_value);
 			waterfall.setPixel(i, cy + HEIGHT, pixel_value);
+			*/
 			previous = sample;
 			average+=samples[i];
 		}
@@ -267,7 +271,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 		if (renderer != null){
 			renderer.set_cy(cy);
 			renderer.set_width(WIDTH);
-			renderer.set_LO_offset(0);
+			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
 			renderer.set_waterfallHigh(waterfallHigh);
 			renderer.set_waterfallLow(waterfallLow);
 			renderer.plotWaterfall(samples);
@@ -485,7 +489,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 
 	private int WIDTH = 480;
 	private int HEIGHT = 160;
-
+	private final int MAX_CL_HEIGHT = 512;
 	private float[] points;
 
 	Bitmap waterfall;

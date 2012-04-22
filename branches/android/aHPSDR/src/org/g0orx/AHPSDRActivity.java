@@ -48,7 +48,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setTitle("aHPSDR: ");
+		setTitle("aHPSDRgl: ");
 
 		// Create a new GLSurfaceView - this holds the GL Renderer
 		mGLSurfaceView = new GLSurfaceView(this);
@@ -109,7 +109,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		
 		setContentView(ll);
 		
-		setTitle("aHPSDR: "+server+" (rx"+receiver+")");
+		setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
         
 	}
 
@@ -271,7 +271,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 					connection.setFps(fps);
 					connection.getSpectrum_protocol3(fps+1);
 					update.start();
-					setTitle("aHPSDR: "+server+" (rx"+receiver+")");
+					setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
 					dialog.dismiss();
 				}
 			});
@@ -352,7 +352,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
     							spectrumView.setConnection(connection);
     							update.setFps(fps);
     							update.start();
-    							setTitle("aHPSDR: "+server+" (rx"+receiver+")");
+    							setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
     							connection.setFps(fps);
     							connection.getSpectrum_protocol3(fps+1);
     							dialog.dismiss();
