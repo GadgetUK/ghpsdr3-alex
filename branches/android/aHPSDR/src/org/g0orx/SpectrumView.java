@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 public class SpectrumView extends View implements OnTouchListener {
@@ -134,14 +135,14 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			paint.setColor(Color.WHITE);
 			canvas.drawLines(points, paint);
 
-			/*
+			
 			// draw the waterfall
 			{
 				Bitmap subBitmap = Bitmap.createBitmap(waterfall, 0, cy, WIDTH, HEIGHT);
 				canvas.drawBitmap(subBitmap, 1, HEIGHT, paint);
 
 			}
-			*/
+			
 			
 			// draw the S-Meter
 			int dbm=connection.getMeter();
@@ -211,7 +212,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 
 		this.offset=offset;
 		
-		/*
+		
 		// scroll the waterfall down
 		if(waterfall.isRecycled()) {
 			waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
@@ -224,7 +225,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			
 			cy = HEIGHT - 1;
 		}
-		*/
+		
 		//waterfall.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT - 1);
 		//waterfall.setPixels(pixels, 0, WIDTH, 0, 1, WIDTH, HEIGHT - 1);
 		//if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
@@ -251,11 +252,11 @@ Log.i("SpectrumView","width="+width+" height="+height);
 
 			points[p++] = (float) i;
 			points[p++] = sample;
-			/*
+			
 			int pixel_value = calculatePixel(samples[i]);
 			waterfall.setPixel(i, cy, pixel_value);
 			waterfall.setPixel(i, cy + HEIGHT, pixel_value);
-			*/
+			
 			previous = sample;
 			average+=samples[i];
 		}
@@ -268,13 +269,22 @@ Log.i("SpectrumView","width="+width+" height="+height);
 		waterfallLow=(average/WIDTH)-5;
 		waterfallHigh=waterfallLow+55;
 		
+		
+		final int[] r_samples = samples;
+		
 		if (renderer != null){
-			renderer.set_cy(cy);
-			renderer.set_width(WIDTH);
-			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
-			renderer.set_waterfallHigh(waterfallHigh);
-			renderer.set_waterfallLow(waterfallLow);
-			renderer.plotWaterfall(samples);
+            mGLSurfaceView.queueEvent(new Runnable() {
+                // This method will be called on the rendering
+                // thread:
+                public void run() {
+        			renderer.set_cy(cy);
+        			renderer.set_width(WIDTH);
+        			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
+        			renderer.set_waterfallHigh(waterfallHigh);
+        			renderer.set_waterfallLow(waterfallLow);
+        			renderer.plotWaterfall(r_samples);		
+                }
+            });
 		}
 		
 		this.postInvalidate();
@@ -363,6 +373,10 @@ Log.i("SpectrumView","width="+width+" height="+height);
 	
 	public void setRenderer(Renderer renderer){
 		this.renderer = renderer;
+	}
+	
+	public void setGLSurfaceView(GLSurfaceView mGLSurfaceView){
+		this.mGLSurfaceView = mGLSurfaceView;
 	}
 
 	public void scroll(int step) {
@@ -484,7 +498,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
 	private Paint paint;
 
 	private Connection connection;
-	
+	private GLSurfaceView mGLSurfaceView;
 	private Renderer renderer;
 
 	private int WIDTH = 480;

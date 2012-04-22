@@ -46,6 +46,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int fShader = R.raw.basic_fs;
 	private Shader shader;
 	private int _program;
+	private int spectrumTex;
 	private float _cy;
 	private int cy;
 	private float _LO_offset;
@@ -60,7 +61,8 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int waterfallHigh_location;
 	private int uMVPMatrix_location;
 	private int aPosition_location;
-	private int spectrumTex;
+	private int textureCoord_location;
+
 
     private ShortBuffer mIndices;
     
@@ -90,6 +92,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	public void set_cy(int cy){
 		this.cy = cy;
 		_cy = (float)cy / MAX_CL_HEIGHT;
+		GLES20.glUniform1f(cy_location, _cy);
 	}
 	
 	public void set_width(int width){
@@ -124,6 +127,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	public void onDrawFrame(GL10 glUnused) {
 		// Ignore the passed-in GL10 interface, and use the GLES20
 		// class's static methods instead.
+		
 		// Load the vertex position
 		float[] mVerticesData =
 		    { 
@@ -146,14 +150,14 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glVertexAttribPointer ( aPosition_location, 3, GLES20.GL_FLOAT, 
                                        false, 
                                        5 * 4, mVertices );
+        GLES20.glEnableVertexAttribArray ( aPosition_location);
         // Load the texture coordinate
         mVertices.position(3);
-        GLES20.glVertexAttribPointer ( spectrumTexture_location, 2, GLES20.GL_FLOAT,
+        GLES20.glVertexAttribPointer ( textureCoord_location, 2, GLES20.GL_FLOAT,
                                        false, 
                                        5 * 4, 
                                        mVertices );
-        GLES20.glEnableVertexAttribArray ( aPosition_location);
-        GLES20.glEnableVertexAttribArray ( spectrumTexture_location );
+        GLES20.glEnableVertexAttribArray ( textureCoord_location );
         
         // Bind the texture
         GLES20.glActiveTexture ( GLES20.GL_TEXTURE0 );
@@ -179,6 +183,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 		// send to the shader
 		GLES20.glUniformMatrix4fv(uMVPMatrix_location, 1, false, mMVPMatrix, 0);
+	    checkGlError("glUniformMatrix4fv");
 	}
 
 	/**
@@ -208,6 +213,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		checkGlError("glUseProgram");
 		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
 		GLES20.glUniform1i(spectrumTexture_location, 0);
+		textureCoord_location = GLES20.glGetUniformLocation(_program, "textureCoord");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");
@@ -215,7 +221,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		waterfallHigh_location = GLES20.glGetUniformLocation(_program, "waterfallHigh");
 		aPosition_location = GLES20.glGetAttribLocation(_program, "aPosition");
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
-	
+	    checkGlError("uMVPMatrix_location");
 		spectrumTex = createTexture2D();
 		
 	}
@@ -226,17 +232,17 @@ class Renderer implements GLSurfaceView.Renderer {
 
         // Use tightly packed data
         GLES20.glPixelStorei ( GLES20.GL_UNPACK_ALIGNMENT, 1 );
-
+	    checkGlError("glPixelStorei");
         //  Generate a texture object
         GLES20.glGenTextures ( 1, textureId, 0 );
 
         // Bind the texture object
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, textureId[0] );
-
+	    checkGlError("glBindTexture");
         //  Load the texture
         GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, MAX_CL_WIDTH, 
         		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
-
+	    checkGlError("glTexImage2D");
         // Set the filtering mode
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR );
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR );
@@ -256,6 +262,8 @@ class Renderer implements GLSurfaceView.Renderer {
 		pixelBuffer.position(0);
 		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
 				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+	    checkGlError("glTexSubImage2D");
+	    
 	}
 	
 	// debugging opengl
