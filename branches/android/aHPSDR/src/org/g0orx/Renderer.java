@@ -62,7 +62,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int uMVPMatrix_location;
 	private int aPosition_location;
 	private int textureCoord_location;
-
+	private IntBuffer pixelBuffer;
 
     private ShortBuffer mIndices;
     
@@ -83,6 +83,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		
 		mIndices = ByteBuffer.allocateDirect(mIndicesData.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		mIndices.put(mIndicesData).position(0);
+		pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 	}
 
 	/*****************************
@@ -253,13 +254,12 @@ class Renderer implements GLSurfaceView.Renderer {
 		return textureId[0];
 	}
 	
-	public void plotWaterfall(int[] samples) {
-		IntBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		for (int i = 0; i < samples.length; i++){
-			int sample = samples[i];
-			sample = sample << 24 + sample << 16 + sample << 8 + sample;
-			pixelBuffer.put(i, samples[i]);
-		}
+	public void setSample(int i, int sample){
+		int value = sample << 24 + sample << 16 + sample << 8 + sample;
+		pixelBuffer.put(i, value);
+	}
+	
+	public void plotWaterfall() {
 		pixelBuffer.position(0);
 		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
 				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
