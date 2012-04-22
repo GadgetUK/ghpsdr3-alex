@@ -96,8 +96,6 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		spectrumView = new SpectrumView(this, width, height/2, connection);
 		spectrumView.setRenderer(renderer);
 		spectrumView.setGLSurfaceView(mGLSurfaceView);
-			
-		//setContentView(mGLSurfaceView);
 		
 		LinearLayout ll = new LinearLayout(this);
 		ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,

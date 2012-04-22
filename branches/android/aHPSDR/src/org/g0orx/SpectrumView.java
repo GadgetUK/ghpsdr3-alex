@@ -38,8 +38,8 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			}
 		}
 		
-		//cy = HEIGHT - 1;
-		cy = MAX_CL_HEIGHT - 1;
+		cy = HEIGHT - 1;
+		//cy = MAX_CL_HEIGHT - 1;
 		average=waterfallLow;
 		this.setOnTouchListener(this);
 
@@ -228,8 +228,8 @@ Log.i("SpectrumView","width="+width+" height="+height);
 		
 		//waterfall.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT - 1);
 		//waterfall.setPixels(pixels, 0, WIDTH, 0, 1, WIDTH, HEIGHT - 1);
-		//if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
-		if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		//if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
 
 		int p = 0;
 		float sample;
