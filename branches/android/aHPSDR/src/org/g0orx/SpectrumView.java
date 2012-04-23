@@ -14,17 +14,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.util.Log;
 
 public class SpectrumView extends View implements OnTouchListener {
 
-	public SpectrumView(Context context, int width,int height,Connection connection) {
+	public SpectrumView(Context context, int width, int height) {
 		super(context);
-Log.i("SpectrumView","width="+width+" height="+height);
-		this.connection = connection;
+		Log.i("SpectrumView","width="+width+" height="+height);
+		this.connection = null;
 		paint = new Paint();
-		WIDTH=width;
-		HEIGHT=height;
+		WIDTH = width;
+		HEIGHT = height;
 		points = new float[WIDTH * 4];
 
 		

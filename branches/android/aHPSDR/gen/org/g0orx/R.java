@@ -15,10 +15,11 @@ public final class R {
     }
     public static final class id {
         public static final int glsurfaceview=0x7f060000;
+        public static final int spectrumview=0x7f060001;
     }
     public static final class layout {
         public static final int main=0x7f030000;
-        public static final int surface_view_overlay=0x7f030001;
+        public static final int surfaceview=0x7f030001;
     }
     public static final class raw {
         public static final int basic_fs=0x7f040000;

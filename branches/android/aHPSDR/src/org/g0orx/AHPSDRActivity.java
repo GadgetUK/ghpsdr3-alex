@@ -52,8 +52,8 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		setTitle("aHPSDRgl: ");
 
 		// Create a new GLSurfaceView - this holds the GL Renderer
-		mGLSurfaceView = new GLSurfaceView(this);
 		//mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurfaceview);
+		mGLSurfaceView = new GLSurfaceView(this);
 		
 		// detect if OpenGL ES 2.0 support exists - if it doesn't, exit.
 		if (detectOpenGLES20()) {
@@ -71,7 +71,6 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		else { // quit if no support - get a better phone! :P
 			this.finish();
 		}
-		
 		
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -99,12 +98,13 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 
 		connection=null;
 
-		spectrumView = new SpectrumView(this, width, height/2, connection);
+		//spectrumView = (SpectrumView) findViewById(R.id.spectrumview);
+		spectrumView = new SpectrumView(this, width, height/2);
 		spectrumView.setRenderer(renderer);
 		spectrumView.setGLSurfaceView(mGLSurfaceView);
 			
+		//setContentView(R.layout.surfaceview);
 		setContentView(spectrumView);
-		//setContentView(R.layout.surface_view_overlay);
 		
 		setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
         
@@ -115,7 +115,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
         Log.i("AHPSDRActivity","onStop");
         super.onStop();
         
-        update.close();
+        //update.close();
         connection.close();
 
         SharedPreferences prefs = getSharedPreferences("aHPSDR", 0);
@@ -178,8 +178,8 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		    connection.setAGC(agc);
 		}
 		
-		update=new Update(connection);
-		update.setFps(fps);
+		//update=new Update(connection);
+		//update.setFps(fps);
 		connection.setFps(fps);
 		connection.getSpectrum_protocol3(fps+1);
 	}
@@ -189,7 +189,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		mGLSurfaceView.onPause();
 		Log.i("AHPSDR", "onPause");
 		//mSensorManager.unregisterListener(this);
-		update.close();
+		//update.close();
 		//connection.close();
 		//connection=null;
 	}
@@ -197,7 +197,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 	public void onDestroy() {
 		super.onDestroy();
 		Log.i("AHPSDR", "onDestroy");
-		update.close();
+		//update.close();
 		connection.close();
 		connection=null;
 	}
@@ -246,7 +246,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					String value = input.getText().toString().trim();
 					Log.i("Server",value);
-					update.close();
+					//update.close();
 					mode=connection.getMode();
 					frequency=connection.getFrequency();
 					filterLow=connection.getFilterLow();
@@ -262,12 +262,12 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 					connection.setFilter(filterLow, filterHigh);
 					connection.setGain(gain);
 					connection.setAGC(agc);
-					update=new Update(connection);					
+					//update=new Update(connection);					
 					spectrumView.setConnection(connection);
-					update.setFps(fps);
+					//update.setFps(fps);
 					connection.setFps(fps);
 					connection.getSpectrum_protocol3(fps+1);
-					update.start();
+					//update.start();
 					setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
 					dialog.dismiss();
 				}
@@ -329,7 +329,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
     					new DialogInterface.OnClickListener() {
     						public void onClick(DialogInterface dialog, int item) {
     							Log.i("selected",servers[item].toString());
-    							update.close();
+    							//update.close();
     							mode=connection.getMode();
     							frequency=connection.getFrequency();
     							filterLow=connection.getFilterLow();
@@ -345,10 +345,10 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
     							connection.setFilter(filterLow, filterHigh);
     							connection.setGain(gain);
     							connection.setAGC(agc);
-    							update=new Update(connection);					
+    							//update=new Update(connection);					
     							spectrumView.setConnection(connection);
-    							update.setFps(fps);
-    							update.start();
+    							//update.setFps(fps);
+    							//update.start();
     							setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
     							connection.setFps(fps);
     							connection.getSpectrum_protocol3(fps+1);
@@ -368,7 +368,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							Log.i("Receiver",Integer.toString(item));
-							update.close();
+							//update.close();
 							mode=connection.getMode();
 							frequency=connection.getFrequency();
 							filterLow=connection.getFilterLow();
@@ -384,11 +384,11 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 							connection.setFilter(filterLow, filterHigh);
 							connection.setGain(gain);
 							connection.setAGC(agc);
-							update=new Update(connection);					
+							//update=new Update(connection);					
 							spectrumView.setConnection(connection);
-							update.setFps(fps);
+							//update.setFps(fps);
 							connection.setFps(fps);
-							update.start();
+							//update.start();
 							dialog.dismiss();
 						}
 					});
@@ -959,7 +959,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int item) {
 							fps=item;
-							update.setFps(fps+1);
+							//update.setFps(fps+1);
 							connection.getSpectrum_protocol3(fps+1);
 							dialog.dismiss();
 						}
@@ -994,7 +994,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 
 	private Connection connection;
 	private SpectrumView spectrumView;
-	private Update update;
+	//private Update update;
 	
 	private CharSequence[] servers;
 
@@ -1145,8 +1145,8 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 	
 	private float xAxisLevel=-1.9F;
 	
-	private GLSurfaceView mGLSurfaceView;
+	private GLSurfaceView mGLSurfaceView = null;
 	// The Renderer
-	Renderer renderer;
+	Renderer renderer = null;
 
 }
