@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.Display;
 import android.view.ViewGroup.LayoutParams;
+import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -52,14 +53,19 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 
 		// Create a new GLSurfaceView - this holds the GL Renderer
 		mGLSurfaceView = new GLSurfaceView(this);
+		//mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glsurfaceview);
 		
 		// detect if OpenGL ES 2.0 support exists - if it doesn't, exit.
 		if (detectOpenGLES20()) {
 			// Tell the surface view we want to create an OpenGL ES 2.0-compatible
 			// context, and set an OpenGL ES 2.0-compatible renderer.
 			mGLSurfaceView.setEGLContextClientVersion(2);
+			mGLSurfaceView.setEGLConfigChooser(8,8,8,8,16,0);
+			mGLSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
+			mGLSurfaceView.setZOrderOnTop(true);
 			renderer = new Renderer(this);
 			mGLSurfaceView.setRenderer(renderer);
+
 			//mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		} 
 		else { // quit if no support - get a better phone! :P
@@ -96,20 +102,9 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		spectrumView = new SpectrumView(this, width, height/2, connection);
 		spectrumView.setRenderer(renderer);
 		spectrumView.setGLSurfaceView(mGLSurfaceView);
-		
-		LinearLayout ll = new LinearLayout(this);
-		ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
-		ll.setOrientation(LinearLayout.VERTICAL);
-		
-		spectrumView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT));
-		ll.addView(spectrumView);
-		mGLSurfaceView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT));
-		//ll.addView(mGLSurfaceView);
-		
-		setContentView(ll);
+			
+		setContentView(spectrumView);
+		//setContentView(R.layout.surface_view_overlay);
 		
 		setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
         

@@ -135,14 +135,11 @@ Log.i("SpectrumView","width="+width+" height="+height);
 			paint.setColor(Color.WHITE);
 			canvas.drawLines(points, paint);
 
-			
 			// draw the waterfall
 			{
 				Bitmap subBitmap = Bitmap.createBitmap(waterfall, 0, cy, WIDTH, HEIGHT);
 				canvas.drawBitmap(subBitmap, 1, HEIGHT, paint);
-
 			}
-			
 			
 			// draw the S-Meter
 			int dbm=connection.getMeter();
@@ -282,7 +279,7 @@ Log.i("SpectrumView","width="+width+" height="+height);
         			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
         			renderer.set_waterfallHigh(waterfallHigh);
         			renderer.set_waterfallLow(waterfallLow);	
-        			renderer.plotWaterfall(f_samples);
+        			//renderer.plotWaterfall(f_samples);
                 }
             });
 		}

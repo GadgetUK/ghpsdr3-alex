@@ -132,13 +132,13 @@ class Renderer implements GLSurfaceView.Renderer {
 		// Load the vertex position
 		float[] mVerticesData =
 		    { 
-		            -0.5f, 0.5f, 0.0f, // Position 0
+		            -2.5f, 2.5f, 1.0f, // Position 0
 		            0.0f, 0.0f, // TexCoord 0
-		            -0.5f, -0.5f, 0.0f, // Position 1
+		            -2.5f, -2.5f, 1.0f, // Position 1
 		            0.0f, 1.0f, // TexCoord 1
-		            0.5f, -0.5f, 0.0f, // Position 2
+		            2.5f, -2.5f, 1.0f, // Position 2
 		            _width, 1.0f, // TexCoord 2
-		            0.5f, 0.5f, 0.0f, // Position 3
+		            2.5f, 2.5f, 1.0f, // Position 3
 		            _width, 0.0f // TexCoord 3
 		    };
 		
