@@ -66,8 +66,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 			mGLSurfaceView.setZOrderOnTop(true);
 			renderer = new Renderer(this);
 			mGLSurfaceView.setRenderer(renderer);
-
-			//mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+			mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		} 
 		else { // quit if no support - get a better phone! :P
 			this.finish();

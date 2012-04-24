@@ -175,9 +175,9 @@ class Renderer implements GLSurfaceView.Renderer {
 	 * @see android.opengl.GLSurfaceView$Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
 	 */
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-		GLES20.glViewport(0, height/2, width, height);
+		GLES20.glViewport(0, 0, width, height);
 		_width = (float)width / MAX_CL_WIDTH;
-		float ratio = (float) width / height * 2;
+		float ratio = (float) width / height;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
 
 		// Creating MVP matrix
@@ -205,7 +205,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		//GLES20.glCullFace(GLES20.GL_BACK); 
 
 		// set the view matrix
-		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0f, 0f, 0f, 1.0f, 0.0f);
+		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		
 		GLES20.glUseProgram(0);
 		
