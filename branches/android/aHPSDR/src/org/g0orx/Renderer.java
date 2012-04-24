@@ -143,7 +143,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		    };
 		
 	    FloatBuffer mVertices;
-		
+	/*	
 		mVertices = ByteBuffer.allocateDirect(mVerticesData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mVertices.put(mVerticesData).position(0);
 		
@@ -168,6 +168,7 @@ class Renderer implements GLSurfaceView.Renderer {
         GLES20.glUniform1i (spectrumTexture_location, 0 );
 
         GLES20.glDrawElements ( GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, mIndices );
+    */
 	}
 
 	/*
@@ -206,7 +207,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		// set the view matrix
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0f, 0f, 0f, 1.0f, 0.0f);
-		
+	/*	
 		GLES20.glUseProgram(0);
 		_program = shader.get_program();	
 		// Start using the shader
@@ -225,7 +226,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
 	    checkGlError("uMVPMatrix_location");
 		spectrumTex = createTexture2D();
-	
+	*/
 	}
 
 	private int createTexture2D(){
