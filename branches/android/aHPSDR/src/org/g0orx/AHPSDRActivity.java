@@ -32,6 +32,7 @@ import android.hardware.SensorManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.media.AudioManager;
 import java.io.BufferedInputStream;
@@ -98,13 +99,14 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 
 		connection=null;
 
-		//spectrumView = (SpectrumView) findViewById(R.id.spectrumview);
 		spectrumView = new SpectrumView(this, width, height/2);
 		spectrumView.setRenderer(renderer);
 		spectrumView.setGLSurfaceView(mGLSurfaceView);
 			
-		//setContentView(R.layout.surfaceview);
-		setContentView(spectrumView);
+		FrameLayout fl = new FrameLayout(this);
+		fl.addView(spectrumView);
+		//fl.addView(mGLSurfaceView);
+		setContentView(fl);
 		
 		setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
         
