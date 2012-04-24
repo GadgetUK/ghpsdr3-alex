@@ -192,7 +192,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		
-		GLES20.glClearColor(.0f, .0f, .0f, 1.0f);
+		GLES20.glClearColor(.0f, .0f, .0f, 0.5f);
 		GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
 		//GLES20.glEnable   ( GLES20.GL_DEPTH_TEST );
@@ -212,6 +212,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		// Start using the shader
 		GLES20.glUseProgram(_program);
 		checkGlError("glUseProgram");
+	
 		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
 		GLES20.glUniform1i(spectrumTexture_location, 0);
 		textureCoord_location = GLES20.glGetUniformLocation(_program, "textureCoord");
@@ -224,7 +225,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
 	    checkGlError("uMVPMatrix_location");
 		spectrumTex = createTexture2D();
-		
+	
 	}
 
 	private int createTexture2D(){
