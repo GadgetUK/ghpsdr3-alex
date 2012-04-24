@@ -103,8 +103,9 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		spectrumView.setRenderer(renderer);
 		spectrumView.setGLSurfaceView(mGLSurfaceView);
 			
-		//setContentView(mGLSurfaceView);
-		setContentView(spectrumView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 
+		setContentView(mGLSurfaceView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 
+						ViewGroup.LayoutParams.MATCH_PARENT));
+		addContentView(spectrumView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 
 				ViewGroup.LayoutParams.MATCH_PARENT));
 		
 		setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");

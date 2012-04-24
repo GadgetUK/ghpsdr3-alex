@@ -79,11 +79,14 @@ class Renderer implements GLSurfaceView.Renderer {
 	public Renderer(Context context) {
 
 		this.mContext = context;
+		
+		/*
 		shader = new Shader(this.vShader, this.fShader, this.mContext, true, 1);
 		
 		mIndices = ByteBuffer.allocateDirect(mIndicesData.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		mIndices.put(mIndicesData).position(0);
 		pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+		*/
 	}
 
 	/*****************************
@@ -130,6 +133,8 @@ class Renderer implements GLSurfaceView.Renderer {
 		// class's static methods instead.
 		
 		// Load the vertex position
+		
+		/*
 		float[] mVerticesData =
 		    { 
 		            -2.5f, 2.5f, 1.0f, // Position 0
@@ -143,7 +148,6 @@ class Renderer implements GLSurfaceView.Renderer {
 		    };
 		
 	    FloatBuffer mVertices;
-	/*	
 		mVertices = ByteBuffer.allocateDirect(mVerticesData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mVertices.put(mVerticesData).position(0);
 		
@@ -181,11 +185,13 @@ class Renderer implements GLSurfaceView.Renderer {
 		float ratio = (float) width / height;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
 
+		/*
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 		// send to the shader
 		GLES20.glUniformMatrix4fv(uMVPMatrix_location, 1, false, mMVPMatrix, 0);
 	    checkGlError("glUniformMatrix4fv");
+	    */
 	}
 
 	/**
@@ -193,7 +199,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		
-		GLES20.glClearColor(.0f, .0f, .0f, 0.5f);
+		GLES20.glClearColor(0.25f, 0.25f, .0f, 0.05f);
 		GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
 		//GLES20.glEnable   ( GLES20.GL_DEPTH_TEST );
@@ -207,8 +213,9 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		// set the view matrix
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0f, 0f, 0f, 1.0f, 0.0f);
-	/*	
+		
 		GLES20.glUseProgram(0);
+		/*
 		_program = shader.get_program();	
 		// Start using the shader
 		GLES20.glUseProgram(_program);
@@ -226,7 +233,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
 	    checkGlError("uMVPMatrix_location");
 		spectrumTex = createTexture2D();
-	*/
+		*/
 	}
 
 	private int createTexture2D(){
