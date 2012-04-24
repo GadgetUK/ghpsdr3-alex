@@ -23,9 +23,6 @@ public class Shader {
 	// The shaders
 	private String _vertexS, _fragmentS;
 
-	// does it have textures?
-	private boolean hasTextures;
-	private int numTextures;
 
 	/************************
 	 * CONSTRUCTOR(S)
@@ -35,12 +32,12 @@ public class Shader {
 	}
 
 	// Takes in Strings directly
-	public Shader(String vertexS, String fragmentS, boolean hasTextures, int numTextures) {
-		setup(vertexS, fragmentS, hasTextures, numTextures);
+	public Shader(String vertexS, String fragmentS) {
+		setup(vertexS, fragmentS);
 	}
 
 	// Takes in ids for files to be read
-	public Shader(int vID, int fID, Context context, boolean hasTextures, int numTextures) {
+	public Shader(int vID, int fID, Context context) {
 		StringBuffer vs = new StringBuffer();
 		StringBuffer fs = new StringBuffer();
 
@@ -79,7 +76,7 @@ public class Shader {
 
 
 		// Setup everything
-		setup(vs.toString(), fs.toString(), hasTextures, numTextures);
+		setup(vs.toString(), fs.toString());
 	}
 
 
@@ -92,16 +89,12 @@ public class Shader {
 	 * @param vs the vertex shader
 	 * @param fs the fragment shader 
 	 */
-	private void setup(String vs, String fs, boolean hasTextures, int numTextures) {
+	private void setup(String vs, String fs) {
 		this._vertexS = vs;
 		this._fragmentS = fs;
 
 		// create the program
 		int create = createProgram();
-
-		// texture variables
-		this.hasTextures = hasTextures;
-		this.numTextures = numTextures;
 	}
 
 	/**

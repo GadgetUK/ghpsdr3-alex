@@ -38,7 +38,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private float[] mVMatrix = new float[16]; 		// modelview
 
 	private final int MAX_CL_WIDTH = 1024;
-	private final int MAX_CL_HEIGHT = 512;
+	private final int MAX_CL_HEIGHT = 128;
 	
 	private Context mContext;
 	private static String TAG = "Renderer";
@@ -80,13 +80,10 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		this.mContext = context;
 		
-		/*
-		shader = new Shader(this.vShader, this.fShader, this.mContext, true, 1);
-		
+		shader = new Shader(this.vShader, this.fShader, this.mContext);
 		mIndices = ByteBuffer.allocateDirect(mIndicesData.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		mIndices.put(mIndicesData).position(0);
 		pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		*/
 	}
 
 	/*****************************
@@ -134,7 +131,6 @@ class Renderer implements GLSurfaceView.Renderer {
 		
 		// Load the vertex position
 		
-		/*
 		float[] mVerticesData =
 		    { 
 		            -2.5f, 2.5f, 1.0f, // Position 0
@@ -170,9 +166,8 @@ class Renderer implements GLSurfaceView.Renderer {
 
         // Set the sampler texture unit to 0
         GLES20.glUniform1i (spectrumTexture_location, 0 );
-
         GLES20.glDrawElements ( GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, mIndices );
-    */
+
 	}
 
 	/*
@@ -180,18 +175,16 @@ class Renderer implements GLSurfaceView.Renderer {
 	 * @see android.opengl.GLSurfaceView$Renderer#onSurfaceChanged(javax.microedition.khronos.opengles.GL10, int, int)
 	 */
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-		GLES20.glViewport(0, 0, width, height);
+		GLES20.glViewport(0, height/2, width, height);
 		_width = (float)width / MAX_CL_WIDTH;
-		float ratio = (float) width / height;
+		float ratio = (float) width / height * 2;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
 
-		/*
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
 		// send to the shader
 		GLES20.glUniformMatrix4fv(uMVPMatrix_location, 1, false, mMVPMatrix, 0);
-	    checkGlError("glUniformMatrix4fv");
-	    */
+	   
 	}
 
 	/**
@@ -199,7 +192,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		
-		GLES20.glClearColor(0.25f, 0.25f, .0f, 0.05f);
+		GLES20.glClearColor(0.1f, 0.2f, .0f, 0.1f);
 		GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
 		//GLES20.glEnable   ( GLES20.GL_DEPTH_TEST );
@@ -215,15 +208,16 @@ class Renderer implements GLSurfaceView.Renderer {
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0f, 0f, 0f, 1.0f, 0.0f);
 		
 		GLES20.glUseProgram(0);
-		/*
+		
 		_program = shader.get_program();	
+		
 		// Start using the shader
 		GLES20.glUseProgram(_program);
 		checkGlError("glUseProgram");
 	
 		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
 		GLES20.glUniform1i(spectrumTexture_location, 0);
-		textureCoord_location = GLES20.glGetUniformLocation(_program, "textureCoord");
+		textureCoord_location = GLES20.glGetAttribLocation(_program, "textureCoord");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");
@@ -231,9 +225,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		waterfallHigh_location = GLES20.glGetUniformLocation(_program, "waterfallHigh");
 		aPosition_location = GLES20.glGetAttribLocation(_program, "aPosition");
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
-	    checkGlError("uMVPMatrix_location");
 		spectrumTex = createTexture2D();
-		*/
 	}
 
 	private int createTexture2D(){
@@ -241,25 +233,20 @@ class Renderer implements GLSurfaceView.Renderer {
         ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * MAX_CL_HEIGHT * 4);
         pixelBuffer.position(0);
         
-        // Use tightly packed data
-        GLES20.glPixelStorei ( GLES20.GL_UNPACK_ALIGNMENT, 1 );
-	    checkGlError("glPixelStorei");
         //  Generate a texture object
         GLES20.glGenTextures ( 1, textureId, 0 );
 
         // Bind the texture object
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, textureId[0] );
-	    checkGlError("glBindTexture");
+	    
         //  Load the texture
         GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, MAX_CL_WIDTH, 
         		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
-	    checkGlError("glTexImage2D");
         // Set the filtering mode
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR );
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR );
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE );
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE );
-
 		return textureId[0];
 	}
 	
