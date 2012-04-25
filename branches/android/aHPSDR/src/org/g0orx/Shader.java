@@ -18,14 +18,14 @@ public class Shader {
 	 **********************/
 
 	// program/vertex/fragment handles
-	private int _program, _vertexShader, _pixelShader;
+	private int _program, _vertexShader, _fragmentShader;
 
 	// The shaders
 	private String _vertexS, _fragmentS;
 
 
 	/************************
-	 * CONSTRUCTOR(S)
+	 * CONSTRUCTOR
 	 *************************/
 	public Shader() {
 
@@ -114,8 +114,8 @@ public class Shader {
 		}
 
 		// pixel shader
-		_pixelShader = loadShader(GLES20.GL_FRAGMENT_SHADER, _fragmentS);
-		if (_pixelShader == 0) {
+		_fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, _fragmentS);
+		if (_fragmentShader == 0) {
 			throw new RuntimeException("fragment shader problem");
 		}
 
@@ -124,7 +124,7 @@ public class Shader {
 		if (_program != 0) {
 			GLES20.glAttachShader(_program, _vertexShader);
 			checkGlError("glAttachShader VS ");
-			GLES20.glAttachShader(_program, _pixelShader);
+			GLES20.glAttachShader(_program, _fragmentShader);
 			checkGlError("glAttachShader PS");
 			GLES20.glLinkProgram(_program);
 			int[] linkStatus = new int[1];
@@ -199,12 +199,12 @@ public class Shader {
 		_vertexShader = shader;
 	}
 
-	public int get_pixelShader() {
-		return _pixelShader;
+	public int get_fragmentShader() {
+		return _fragmentShader;
 	}
 
-	public void set_pixelShader(int shader) {
-		_pixelShader = shader;
+	public void set_fragmentShader(int shader) {
+		_fragmentShader = shader;
 	}
 
 	public String get_vertexS() {

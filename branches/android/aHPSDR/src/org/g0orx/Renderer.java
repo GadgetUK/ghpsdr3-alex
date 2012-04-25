@@ -208,7 +208,6 @@ class Renderer implements GLSurfaceView.Renderer {
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		
 		GLES20.glUseProgram(0);
-		
 		_program = shader.get_program();	
 		
 		// Start using the shader
@@ -221,6 +220,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		textureCoord_location = GLES20.glGetAttribLocation(_program, "textureCoord");
 		//checkGlError("textureCoord_location");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
+		//checkGlError("cy_location");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");
 		waterfallLow_location = GLES20.glGetUniformLocation(_program, "waterfallLow");
