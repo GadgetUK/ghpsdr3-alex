@@ -216,7 +216,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		checkGlError("glUseProgram");
 	
 		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
-		GLES20.glUniform1i(spectrumTexture_location, 0);
+		//GLES20.glUniform1i(spectrumTexture_location, 0);
 		//checkGlError("spectrumTexture_location");
 		textureCoord_location = GLES20.glGetAttribLocation(_program, "textureCoord");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");

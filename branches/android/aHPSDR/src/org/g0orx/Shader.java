@@ -94,10 +94,10 @@ public class Shader {
 		this._fragmentS = fs;
 
 		// create the program
-		int create = createProgram();
+		createProgram();
 	}
 
-	/**
+	/*
 	 * Creates a shader program.
 	 * @param vertexSource
 	 * @param fragmentSource
@@ -120,9 +120,9 @@ public class Shader {
 		_program = GLES20.glCreateProgram();
 		if (_program != 0) {
 			GLES20.glAttachShader(_program, _vertexShader);
-			//checkGlError("glAttachShader VS " + this.toString());
+			checkGlError("glAttachShader VS ");
 			GLES20.glAttachShader(_program, _pixelShader);
-			//checkGlError("glAttachShader PS");
+			checkGlError("glAttachShader PS");
 			GLES20.glLinkProgram(_program);
 			int[] linkStatus = new int[1];
 			GLES20.glGetProgramiv(_program, GLES20.GL_LINK_STATUS, linkStatus, 0);
@@ -131,13 +131,15 @@ public class Shader {
 				Log.e("Shader", GLES20.glGetProgramInfoLog(_program));
 				GLES20.glDeleteProgram(_program);
 				_program = 0;
-				return 0;
+				throw new RuntimeException("Cannot link program");
+
 			}
 		}
-		else
+		else {
 			Log.d("CreateProgram", "Could not create program");
-
-		return 1;
+			throw new RuntimeException("Cannot create program");
+		}
+		return 0;
 	}
 
 	/**
