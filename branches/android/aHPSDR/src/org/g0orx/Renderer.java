@@ -192,7 +192,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		
-		GLES20.glClearColor(0.1f, 0.3f, .0f, 0.1f);
+		GLES20.glClearColor(0.0f, 0.0f, .0f, 0.0f);
 		GLES20.glClear( GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
 		//GLES20.glEnable   ( GLES20.GL_DEPTH_TEST );
