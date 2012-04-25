@@ -72,6 +72,7 @@ public class Shader {
 			fs.deleteCharAt(fs.length() - 1);
 		} catch (Exception e) {
 			Log.d("ERROR-readingShader", "Could not read shader: " + e.getLocalizedMessage());
+			throw new RuntimeException("Could not read shader");
 		}
 
 
@@ -95,7 +96,7 @@ public class Shader {
 
 		// create the program
 		int created = createProgram();
-		if (created == 0) throw new RuntimeException("cannot create program");
+		//if (created == 0) throw new RuntimeException("cannot create program");
 	}
 
 	/*
@@ -108,13 +109,13 @@ public class Shader {
 		// Vertex shader
 		_vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, _vertexS);
 		if (_vertexShader == 0) {
-			return 0;
+			throw new RuntimeException("vertex shader problem");
 		}
 
 		// pixel shader
 		_pixelShader = loadShader(GLES20.GL_FRAGMENT_SHADER, _fragmentS);
 		if (_pixelShader == 0) {
-			return 0;
+			throw new RuntimeException("fragment shader problem");
 		}
 
 		// Create the program
@@ -140,7 +141,7 @@ public class Shader {
 			Log.d("CreateProgram", "Could not create program");
 			throw new RuntimeException("Cannot create program");
 		}
-		return 0;
+		return 1;		// success
 	}
 
 	/**

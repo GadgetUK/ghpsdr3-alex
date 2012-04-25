@@ -24,6 +24,7 @@ public final class R {
     public static final class raw {
         public static final int basic_fs=0x7f040000;
         public static final int basic_vs=0x7f040001;
+        public static final int original_vs=0x7f040002;
     }
     public static final class string {
         public static final int app_name=0x7f050001;

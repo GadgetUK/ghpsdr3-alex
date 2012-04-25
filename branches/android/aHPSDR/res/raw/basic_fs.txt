@@ -1,3 +1,6 @@
+
+precision mediump float;
+
 uniform sampler2D spectrumTexture;
 uniform float cy;
 uniform float offset;
