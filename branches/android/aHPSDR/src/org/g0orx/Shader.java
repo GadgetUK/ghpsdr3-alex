@@ -94,7 +94,8 @@ public class Shader {
 		this._fragmentS = fs;
 
 		// create the program
-		createProgram();
+		int created = createProgram();
+		if (created == 0) throw new RuntimeException("cannot create program");
 	}
 
 	/*
