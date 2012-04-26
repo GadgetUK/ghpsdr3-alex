@@ -183,8 +183,8 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
-		Matrix.scaleM(mScaleMatrix, 0, 3.0f, 3.0f, 1.0f);
-		Matrix.translateM(mScaleMatrix, 0, 0.0f, -3.0f, 0.0f);
+		Matrix.scaleM(mScaleMatrix, 0, 4.0f, 4.0f, 1.0f);
+		Matrix.translateM(mScaleMatrix, 0, 0.0f, -2.0f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -220,20 +220,16 @@ class Renderer implements GLSurfaceView.Renderer {
 		GLES20.glUseProgram(_program);
 		checkGlError("glUseProgram");
 	
-		//spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
-		//GLES20.glUniform1i(spectrumTexture_location, 0);
-		//checkGlError("spectrumTexture_location");
-		textureCoord_location = GLES20.glGetAttribLocation(_program, "atextureCoord");
-		//checkGlError("textureCoord_location");
+		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
+		GLES20.glUniform1i(spectrumTexture_location, 0);
+		textureCoord_location = GLES20.glGetAttribLocation(_program, "aTextureCoord");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
-		//checkGlError("cy_location");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");
 		waterfallLow_location = GLES20.glGetUniformLocation(_program, "waterfallLow");
 		waterfallHigh_location = GLES20.glGetUniformLocation(_program, "waterfallHigh");
 		aPosition_location = GLES20.glGetAttribLocation(_program, "aPosition");
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
-		//checkGlError("uMVPMatrix_location");
 		
 		spectrumTex = createTexture2D();
 	}
