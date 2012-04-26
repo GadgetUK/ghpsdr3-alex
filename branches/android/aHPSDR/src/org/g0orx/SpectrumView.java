@@ -267,6 +267,7 @@ public class SpectrumView extends View implements OnTouchListener {
 		waterfallLow=(average/WIDTH)-5;
 		waterfallHigh=waterfallLow+55;
 		
+		/*
 		if (renderer != null && mGLSurfaceView != null){
 			final int[] f_samples = new int[samples.length];
 			System.arraycopy(samples, 0, f_samples, 0, samples.length);
@@ -279,13 +280,13 @@ public class SpectrumView extends View implements OnTouchListener {
         			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
         			renderer.set_waterfallHigh(waterfallHigh);
         			renderer.set_waterfallLow(waterfallLow);	
-        			//renderer.plotWaterfall(f_samples);
+        			renderer.plotWaterfall(f_samples);
                 }
             });
 		}
-		
+		*/
 		this.postInvalidate();
-		mGLSurfaceView.requestRender();
+		//mGLSurfaceView.requestRender();
 	}
 
 	private int calculatePixel(float sample) {

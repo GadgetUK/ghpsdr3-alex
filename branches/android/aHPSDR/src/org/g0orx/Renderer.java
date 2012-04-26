@@ -39,7 +39,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private float[] mVMatrix = new float[16]; 		// modelview
 
 	private final int MAX_CL_WIDTH = 1024;
-	private final int MAX_CL_HEIGHT = 128;
+	private final int MAX_CL_HEIGHT = 512;
 	
 	private Context mContext;
 	private static String TAG = "Renderer";
@@ -264,9 +264,9 @@ class Renderer implements GLSurfaceView.Renderer {
 	public void plotWaterfall(final int[] samples) {
 		pixelBuffer.position(0);
 		pixelBuffer.put(samples).position(0);
-		//GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
-		//		GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
-	    //checkGlError("glTexSubImage2D");
+		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
+				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+	    checkGlError("glTexSubImage2D");
 	}
 	
 	// debugging opengl
