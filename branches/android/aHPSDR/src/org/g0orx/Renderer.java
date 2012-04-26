@@ -63,8 +63,8 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int uMVPMatrix_location;
 	private int aPosition_location;
 	private int textureCoord_location;
+	
 	private IntBuffer pixelBuffer;
-
     private ShortBuffer mIndices;
     
     private final short[] mIndicesData =
@@ -264,9 +264,9 @@ class Renderer implements GLSurfaceView.Renderer {
 	public void plotWaterfall(final int[] samples) {
 		pixelBuffer.position(0);
 		pixelBuffer.put(samples).position(0);
-		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
-				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
-	    checkGlError("glTexSubImage2D");
+		//GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
+		//		GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
+	    //checkGlError("glTexSubImage2D");
 	}
 	
 	// debugging opengl
