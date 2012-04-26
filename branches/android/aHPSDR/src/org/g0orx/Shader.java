@@ -23,7 +23,6 @@ public class Shader {
 	// The shaders
 	private String _vertexS, _fragmentS;
 
-
 	/************************
 	 * CONSTRUCTOR
 	 *************************/
@@ -109,8 +108,7 @@ public class Shader {
 		// Vertex shader
 		_vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, _vertexS);
 		if (_vertexShader == 0) {
-			//throw new RuntimeException("vertex shader problem");
-			return 0;
+			throw new RuntimeException("vertex shader problem");
 		}
 
 		// pixel shader

@@ -35,6 +35,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	// Modelview/Projection matrices
 	private float[] mMVPMatrix = new float[16];
 	private float[] mProjMatrix = new float[16];
+	private float[] mScaleMatrix = new float[16];   // scaling
 	private float[] mVMatrix = new float[16]; 		// modelview
 
 	private final int MAX_CL_WIDTH = 1024;
@@ -80,7 +81,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		this.mContext = context;
 		
-		shader = new Shader(this.vShader, this.fShader, this.mContext);
+		shader = new Shader();
 		mIndices = ByteBuffer.allocateDirect(mIndicesData.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		mIndices.put(mIndicesData).position(0);
 		pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
@@ -133,13 +134,13 @@ class Renderer implements GLSurfaceView.Renderer {
 		
 		float[] mVerticesData =
 		    { 
-		            -2.5f, 2.5f, 1.0f, // Position 0
+		            -0.5f, 0.5f, 1.0f, // Position 0
 		            0.0f, 0.0f, // TexCoord 0
-		            -2.5f, -2.5f, 1.0f, // Position 1
+		            -0.5f, -0.5f, 1.0f, // Position 1
 		            0.0f, 1.0f, // TexCoord 1
-		            2.5f, -2.5f, 1.0f, // Position 2
+		            0.5f, -0.5f, 1.0f, // Position 2
 		            _width, 1.0f, // TexCoord 2
-		            2.5f, 2.5f, 1.0f, // Position 3
+		            0.5f, 0.5f, 1.0f, // Position 3
 		            _width, 0.0f // TexCoord 3
 		    };
 		
@@ -180,11 +181,15 @@ class Renderer implements GLSurfaceView.Renderer {
 		float ratio = (float) width / height;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
 
+		// scaling
+		Matrix.setIdentityM(mScaleMatrix, 0);
+		Matrix.scaleM(mScaleMatrix, 0, 3.0f, 3.0f, 1.0f);
+		Matrix.translateM(mScaleMatrix, 0, 0.0f, -3.0f, 0.0f);
+		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
-		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
 		// send to the shader
 		GLES20.glUniformMatrix4fv(uMVPMatrix_location, 1, false, mMVPMatrix, 0);
-	   
 	}
 
 	/**
@@ -208,6 +213,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		
 		GLES20.glUseProgram(0);
+		shader = new Shader(vShader, fShader, mContext);
 		_program = shader.get_program();	
 		
 		// Start using the shader
@@ -217,7 +223,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		//spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
 		//GLES20.glUniform1i(spectrumTexture_location, 0);
 		//checkGlError("spectrumTexture_location");
-		textureCoord_location = GLES20.glGetAttribLocation(_program, "textureCoord");
+		textureCoord_location = GLES20.glGetAttribLocation(_program, "atextureCoord");
 		//checkGlError("textureCoord_location");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
 		//checkGlError("cy_location");
@@ -261,7 +267,6 @@ class Renderer implements GLSurfaceView.Renderer {
 		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
 				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
 	    checkGlError("glTexSubImage2D");
-	    
 	}
 	
 	// debugging opengl
