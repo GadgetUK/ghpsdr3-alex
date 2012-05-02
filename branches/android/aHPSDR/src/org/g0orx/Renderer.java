@@ -177,14 +177,13 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
 		GLES20.glViewport(0, 0, width, height);
-		_width = (float)width / MAX_CL_WIDTH;
 		float ratio = (float) width / height;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
 
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
-		Matrix.scaleM(mScaleMatrix, 0, 3.0f, 3.0f, 1.0f);
-		Matrix.translateM(mScaleMatrix, 0, 0.0f, -3.0f, 0.0f);
+		Matrix.scaleM(mScaleMatrix, 0, 14.5f, 11.0f, 1.0f);
+		Matrix.translateM(mScaleMatrix, 0, 0.0f, -0.6f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -220,20 +219,16 @@ class Renderer implements GLSurfaceView.Renderer {
 		GLES20.glUseProgram(_program);
 		checkGlError("glUseProgram");
 	
-		//spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
-		//GLES20.glUniform1i(spectrumTexture_location, 0);
-		//checkGlError("spectrumTexture_location");
+		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
+		GLES20.glUniform1i(spectrumTexture_location, 0);
 		textureCoord_location = GLES20.glGetAttribLocation(_program, "atextureCoord");
-		//checkGlError("textureCoord_location");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
-		//checkGlError("cy_location");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");
 		waterfallLow_location = GLES20.glGetUniformLocation(_program, "waterfallLow");
 		waterfallHigh_location = GLES20.glGetUniformLocation(_program, "waterfallHigh");
 		aPosition_location = GLES20.glGetAttribLocation(_program, "aPosition");
 		uMVPMatrix_location = GLES20.glGetUniformLocation(_program, "uMVPMatrix");
-		//checkGlError("uMVPMatrix_location");
 		
 		spectrumTex = createTexture2D();
 	}
@@ -261,12 +256,18 @@ class Renderer implements GLSurfaceView.Renderer {
 	}
 	
 	
-	public void plotWaterfall(final int[] samples) {
-		pixelBuffer.position(0);
-		pixelBuffer.put(samples).position(0);
-		GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, MAX_CL_WIDTH, 1, 
-				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
-	    checkGlError("glTexSubImage2D");
+	public void plotWaterfall(final byte[] bitmap) {
+		ByteBuffer buffer = ByteBuffer.wrap(bitmap);
+		try{
+	        // Bind the texture
+	        GLES20.glActiveTexture ( GLES20.GL_TEXTURE0 );
+	        GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, spectrumTex );
+			GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, bitmap.length/4, 1, 
+				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+			//checkGlError("glTexSubImage2D");
+		} catch (Exception e){
+			
+		}
 	}
 	
 	// debugging opengl

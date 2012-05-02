@@ -28,7 +28,7 @@ public class SpectrumView extends View implements OnTouchListener {
 		HEIGHT = height;
 		points = new float[WIDTH * 4];
 
-		
+		/*
 		waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
 				Bitmap.Config.ARGB_8888);
 		//pixels = new int[WIDTH * HEIGHT];
@@ -40,7 +40,8 @@ public class SpectrumView extends View implements OnTouchListener {
 		}
 		
 		cy = HEIGHT - 1;
-		//cy = MAX_CL_HEIGHT - 1;
+		*/
+		cy = MAX_CL_HEIGHT - 1;
 		average=waterfallLow;
 		this.setOnTouchListener(this);
 
@@ -136,11 +137,13 @@ public class SpectrumView extends View implements OnTouchListener {
 			paint.setColor(Color.WHITE);
 			canvas.drawLines(points, paint);
 
+			/*
 			// draw the waterfall
 			{
 				Bitmap subBitmap = Bitmap.createBitmap(waterfall, 0, cy, WIDTH, HEIGHT);
 				canvas.drawBitmap(subBitmap, 1, HEIGHT, paint);
 			}
+			*/
 			
 			// draw the S-Meter
 			int dbm=connection.getMeter();
@@ -205,12 +208,12 @@ public class SpectrumView extends View implements OnTouchListener {
 		}
 	}
 
-	public void plotSpectrum(int[] samples, int filterLow, int filterHigh,
+	public void plotSpectrum(byte[] samples, int filterLow, int filterHigh,
 			int sampleRate, int offset) {
 
 		this.offset=offset;
 		
-		
+		/*
 		// scroll the waterfall down
 		if(waterfall.isRecycled()) {
 			waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
@@ -223,11 +226,11 @@ public class SpectrumView extends View implements OnTouchListener {
 			
 			cy = HEIGHT - 1;
 		}
-		
+		*/
 		//waterfall.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT - 1);
 		//waterfall.setPixels(pixels, 0, WIDTH, 0, 1, WIDTH, HEIGHT - 1);
-		if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
-		//if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		//if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
+		if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
 
 		int p = 0;
 		float sample;
@@ -237,9 +240,9 @@ public class SpectrumView extends View implements OnTouchListener {
 		
 		for (int i = 0; i < WIDTH; i++) {
 			sample = (float) Math
-					.floor(((float) spectrumHigh - (float) samples[i])
+					.floor(((float) spectrumHigh - (float) (-(samples[i] & 0xFF)
 							* (float) HEIGHT
-							/ (float) (spectrumHigh - spectrumLow));
+							/ (float) (spectrumHigh - spectrumLow))));
 			if (i == 0) {
 				points[p++] = (float) i;
 				points[p++] = sample;
@@ -251,10 +254,11 @@ public class SpectrumView extends View implements OnTouchListener {
 			points[p++] = (float) i;
 			points[p++] = sample;
 			
+			/*
 			int pixel_value = calculatePixel(samples[i]);
 			waterfall.setPixel(i, cy, pixel_value);
 			waterfall.setPixel(i, cy + HEIGHT, pixel_value);
-			
+			*/
 			previous = sample;
 			average+=samples[i];
 		}
@@ -267,10 +271,12 @@ public class SpectrumView extends View implements OnTouchListener {
 		waterfallLow=(average/WIDTH)-5;
 		waterfallHigh=waterfallLow+55;
 		
-		/*
+		
 		if (renderer != null && mGLSurfaceView != null){
-			final int[] f_samples = new int[samples.length];
-			System.arraycopy(samples, 0, f_samples, 0, samples.length);
+			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
+			for (int i = 0; i < WIDTH; i++){
+				bitmap[i*4] = bitmap[i*4+1] = bitmap[i*4+2] = bitmap[i*4+3] = samples[i];
+			}
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering
                 // thread:
@@ -280,13 +286,13 @@ public class SpectrumView extends View implements OnTouchListener {
         			renderer.set_LO_offset(0); // offset should be offset/samplerate * width/MAX_CL_WIDTH
         			renderer.set_waterfallHigh(waterfallHigh);
         			renderer.set_waterfallLow(waterfallLow);	
-        			renderer.plotWaterfall(f_samples);
+        			renderer.plotWaterfall(bitmap);
                 }
             });
 		}
-		*/
+		
 		this.postInvalidate();
-		//mGLSurfaceView.requestRender();
+		mGLSurfaceView.requestRender();
 	}
 
 	private int calculatePixel(float sample) {
