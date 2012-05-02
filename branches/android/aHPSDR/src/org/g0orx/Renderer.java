@@ -221,7 +221,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 		spectrumTexture_location = GLES20.glGetUniformLocation(_program, "spectrumTexture");
 		GLES20.glUniform1i(spectrumTexture_location, 0);
-		textureCoord_location = GLES20.glGetAttribLocation(_program, "atextureCoord");
+		textureCoord_location = GLES20.glGetAttribLocation(_program, "aTextureCoord");
 		cy_location = GLES20.glGetUniformLocation(_program, "cy");
 		offset_location = GLES20.glGetUniformLocation(_program, "offset");
 		width_location = GLES20.glGetUniformLocation(_program, "width");

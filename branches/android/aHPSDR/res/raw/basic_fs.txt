@@ -18,7 +18,7 @@ void main()
   if (x_coord < 0.0) x_coord += width;
   if (x_coord > width) x_coord -= width;
   vec4 value = texture2D(spectrumTexture, vec2(x_coord, y_coord));
-  float sample = 0.0 - value.r;
+  float sample = 0.0 - value.a;
 
   float percent = (sample - waterfallLow)/(waterfallHigh-waterfallLow);
   if (percent < 0.0) percent = 0.0;
