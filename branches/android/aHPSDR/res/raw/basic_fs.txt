@@ -42,6 +42,7 @@ void main()
   }
 
   gl_FragColor = texel;
+  gl_FragColor = value;
 
 }
 

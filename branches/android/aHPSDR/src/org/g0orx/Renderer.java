@@ -109,11 +109,13 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void set_waterfallLow(int low){
 		_waterfallLow = low;
+		_waterfallLow /= 256.0;
 		GLES20.glUniform1f(waterfallLow_location, _waterfallLow);
 	}
 	
 	public void set_waterfallHigh(int high){
 		_waterfallHigh = high;
+		_waterfallHigh /= 256.0;
 		GLES20.glUniform1f(waterfallHigh_location, _waterfallHigh);
 	}
 	
@@ -180,7 +182,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
-		Matrix.scaleM(mScaleMatrix, 0, 14.5f, 11.0f, 1.0f);
+		Matrix.scaleM(mScaleMatrix, 0, 15.0f, 11.0f, 1.0f);
 		Matrix.translateM(mScaleMatrix, 0, 0.0f, -0.6f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
@@ -234,16 +236,24 @@ class Renderer implements GLSurfaceView.Renderer {
 		int[] textureId = new int[1];
         ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * MAX_CL_HEIGHT * 4);
         pixelBuffer.position(0);
-        
         //  Generate a texture object
         GLES20.glGenTextures ( 1, textureId, 0 );
         //checkGlError("GenTextures");
         // Bind the texture object
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, textureId[0] );
 	    
+        for (int i = 0; i < MAX_CL_HEIGHT; i++){
+        	for (int j = 0; j < MAX_CL_WIDTH; j++){
+        		pixelBuffer.put((byte) 0xff);
+        		pixelBuffer.put((byte) 0x00);
+        		pixelBuffer.put((byte) 0x00);
+        		pixelBuffer.put((byte) 0xff);
+        	}
+        }
+        pixelBuffer.position(0);
         //  Load the texture
         GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, MAX_CL_WIDTH, 
-        		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer );
+        		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
         // Set the filtering mode
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR );
         GLES20.glTexParameteri ( GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR );

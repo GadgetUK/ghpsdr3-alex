@@ -275,7 +275,10 @@ public class SpectrumView extends View implements OnTouchListener {
 		if (renderer != null && mGLSurfaceView != null){
 			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
 			for (int i = 0; i < WIDTH; i++){
-				bitmap[i*4] = samples[i];
+				bitmap[i*4] = 0;
+				bitmap[i*4+1] = (byte) ( -(samples[i] & 0xff) - waterfallLow);
+				bitmap[i*4+2] = 0;
+				bitmap[i*4+3] = (byte) 255;
 			}
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering
