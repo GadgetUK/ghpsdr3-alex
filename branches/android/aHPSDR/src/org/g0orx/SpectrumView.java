@@ -27,24 +27,10 @@ public class SpectrumView extends View implements OnTouchListener {
 		WIDTH = width;
 		HEIGHT = height;
 		points = new float[WIDTH * 4];
-
-		/*
-		waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
-				Bitmap.Config.ARGB_8888);
-		//pixels = new int[WIDTH * HEIGHT];
-
-		for (int x = 0; x < WIDTH; x++) {
-			for (int y = 0; y < (HEIGHT*2); y++) {
-				waterfall.setPixel(x, y, Color.BLACK);
-			}
-		}
-		
-		cy = HEIGHT - 1;
-		*/
+		average= -80;
 		cy = MAX_CL_HEIGHT - 1;
 		average=waterfallLow;
 		this.setOnTouchListener(this);
-
 	}
 
 	public void setConnection(Connection connection) {
@@ -137,14 +123,6 @@ public class SpectrumView extends View implements OnTouchListener {
 			paint.setColor(Color.WHITE);
 			canvas.drawLines(points, paint);
 
-			/*
-			// draw the waterfall
-			{
-				Bitmap subBitmap = Bitmap.createBitmap(waterfall, 0, cy, WIDTH, HEIGHT);
-				canvas.drawBitmap(subBitmap, 1, HEIGHT, paint);
-			}
-			*/
-			
 			// draw the S-Meter
 			int dbm=connection.getMeter();
 			int smeter=dbm+127;
@@ -212,32 +190,13 @@ public class SpectrumView extends View implements OnTouchListener {
 			int sampleRate, int offset) {
 
 		this.offset=offset;
-		
-		/*
-		// scroll the waterfall down
-		if(waterfall.isRecycled()) {
-			waterfall = Bitmap.createBitmap(WIDTH, HEIGHT*2,
-					Bitmap.Config.ARGB_8888);
-			for (int x = 0; x < WIDTH; x++) {
-				for (int y = 0; y < (HEIGHT*2); y++) {
-					waterfall.setPixel(x, y, Color.BLACK);
-				}
-			}
-			
-			cy = HEIGHT - 1;
-		}
-		*/
-		//waterfall.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT - 1);
-		//waterfall.setPixels(pixels, 0, WIDTH, 0, 1, WIDTH, HEIGHT - 1);
-		//if (--cy < 0) cy = HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
 		if (--cy < 0) cy = MAX_CL_HEIGHT - 1;  // "scroll" down one row with fast waterfall algorithm
 
 		int p = 0;
 		float sample;
 		float previous = 0.0F;
 
-		average=0;
-		
+		int sum = 0;
 		for (int i = 0; i < WIDTH; i++) {
 			sample = (float) Math
 					.floor(((float) spectrumHigh - (float) (-(samples[i] & 0xFF)))
@@ -254,13 +213,8 @@ public class SpectrumView extends View implements OnTouchListener {
 			points[p++] = (float) i;
 			points[p++] = sample;
 			
-			/*
-			int pixel_value = calculatePixel(samples[i]);
-			waterfall.setPixel(i, cy, pixel_value);
-			waterfall.setPixel(i, cy + HEIGHT, pixel_value);
-			*/
 			previous = sample;
-			average -= (samples[i] & 0xFF);
+			sum -= (samples[i] & 0xFF);
 		}
 
 		this.filterLow = filterLow;
@@ -268,7 +222,8 @@ public class SpectrumView extends View implements OnTouchListener {
 		filterLeft = (filterLow - (-sampleRate / 2)) * WIDTH / sampleRate;
 		filterRight = (filterHigh - (-sampleRate / 2)) * WIDTH / sampleRate;
 
-		waterfallLow=(average/WIDTH)-5;
+		average = (int) ((float)average * 0.98f + (float)sum / WIDTH * 0.02f);
+		waterfallLow= average -5;
 		waterfallHigh=waterfallLow+55;
 		
 		
@@ -276,9 +231,6 @@ public class SpectrumView extends View implements OnTouchListener {
 			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
 			for (int i = 0; i < WIDTH; i++){
 				bitmap[i*4] = samples[i];
-				bitmap[i*4+1] = 0;
-				bitmap[i*4+2] = 0;
-				bitmap[i*4+3] = (byte) 255;
 			}
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering

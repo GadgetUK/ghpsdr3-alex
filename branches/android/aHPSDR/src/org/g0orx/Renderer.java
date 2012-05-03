@@ -97,7 +97,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void set_width(int width){
 		_width = (float)width/MAX_CL_WIDTH;
-		if (_width > 1.0) _width = 1.0;
+		if (_width > 1.0) _width = 1.0f;
 		GLES20.glUniform1f(width_location, _width);
 	}
 	
@@ -134,13 +134,13 @@ class Renderer implements GLSurfaceView.Renderer {
 		float[] mVerticesData =
 		    { 
 		            -0.5f, 0.5f, 1.0f, // Position 0
-		            0.0f, 0.0f, // TexCoord 0
+		            _width, 0.0f, // TexCoord 0
 		            -0.5f, -0.5f, 1.0f, // Position 1
-		            0.0f, 1.0f, // TexCoord 1
+		            _width, 1.0f, // TexCoord 1
 		            0.5f, -0.5f, 1.0f, // Position 2
-		            _width, 1.0f, // TexCoord 2
+		            0.0f, 1.0f, // TexCoord 2
 		            0.5f, 0.5f, 1.0f, // Position 3
-		            _width, 0.0f // TexCoord 3
+		            0.0f, 0.0f // TexCoord 3
 		    };
 		
 	    FloatBuffer mVertices;
@@ -181,7 +181,7 @@ class Renderer implements GLSurfaceView.Renderer {
 
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
-		Matrix.scaleM(mScaleMatrix, 0, 15.0f, 11.0f, 1.0f);
+		Matrix.scaleM(mScaleMatrix, 0, 15.7f, 11.0f, 1.0f);
 		Matrix.translateM(mScaleMatrix, 0, 0.0f, -0.6f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
