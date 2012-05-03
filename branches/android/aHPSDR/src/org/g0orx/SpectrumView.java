@@ -275,8 +275,8 @@ public class SpectrumView extends View implements OnTouchListener {
 		if (renderer != null && mGLSurfaceView != null){
 			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
 			for (int i = 0; i < WIDTH; i++){
-				bitmap[i*4] = 0;
-				bitmap[i*4+1] = (byte) ( -(samples[i] & 0xff) - waterfallLow);
+				bitmap[i*4] = samples[i];
+				bitmap[i*4+1] = 0;
 				bitmap[i*4+2] = 0;
 				bitmap[i*4+3] = (byte) 255;
 			}
@@ -514,7 +514,7 @@ public class SpectrumView extends View implements OnTouchListener {
 	private final int MAX_CL_HEIGHT = 512;
 	private float[] points;
 
-	Bitmap waterfall;
+	//Bitmap waterfall;
 	//int[] pixels;
 	private int cy;
 	int offset;
