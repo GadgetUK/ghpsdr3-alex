@@ -10,8 +10,6 @@ varying vec2 vTextureCoord;
 
 void main()
 {
-
-
   float y_coord = vTextureCoord.t + cy;
   if (y_coord > 1.0) y_coord -= 1.0;
   float x_coord = vTextureCoord.s - offset;
@@ -45,6 +43,5 @@ void main()
 
   gl_FragColor = texel;
 
-  //gl_FragColor = vec4(0.15, 0.1, 0.0, 0.05);
 }
 

@@ -109,13 +109,11 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void set_waterfallLow(int low){
 		_waterfallLow = low;
-		_waterfallLow /= 256.0;
 		GLES20.glUniform1f(waterfallLow_location, _waterfallLow);
 	}
 	
 	public void set_waterfallHigh(int high){
 		_waterfallHigh = high;
-		_waterfallHigh /= 256.0;
 		GLES20.glUniform1f(waterfallHigh_location, _waterfallHigh);
 	}
 	
@@ -139,9 +137,9 @@ class Renderer implements GLSurfaceView.Renderer {
 		            -0.5f, -0.5f, 1.0f, // Position 1
 		            0.0f, 1.0f, // TexCoord 1
 		            0.5f, -0.5f, 1.0f, // Position 2
-		            _width, 1.0f, // TexCoord 2
+		            1.0f, 1.0f, // TexCoord 2
 		            0.5f, 0.5f, 1.0f, // Position 3
-		            _width, 0.0f // TexCoord 3
+		            1.0f, 0.0f // TexCoord 3
 		    };
 		
 	    FloatBuffer mVertices;
@@ -213,8 +211,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		
 		GLES20.glUseProgram(0);
 		shader = new Shader(vShader, fShader, mContext);
-		_program = shader.get_program();	
-		
+		_program = shader.get_program();			
 		// Start using the shader
 		GLES20.glUseProgram(_program);
 		checkGlError("glUseProgram");
@@ -269,7 +266,7 @@ class Renderer implements GLSurfaceView.Renderer {
 			
 		}
 	}
-	
+
 	// debugging opengl
 	private void checkGlError(String op) {
 		int error;

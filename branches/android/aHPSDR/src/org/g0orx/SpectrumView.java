@@ -240,9 +240,9 @@ public class SpectrumView extends View implements OnTouchListener {
 		
 		for (int i = 0; i < WIDTH; i++) {
 			sample = (float) Math
-					.floor(((float) spectrumHigh - (float) (-(samples[i] & 0xFF)
+					.floor(((float) spectrumHigh - (float) (-(samples[i] & 0xFF)))
 							* (float) HEIGHT
-							/ (float) (spectrumHigh - spectrumLow))));
+							/ (float) (spectrumHigh - spectrumLow));
 			if (i == 0) {
 				points[p++] = (float) i;
 				points[p++] = sample;
@@ -260,7 +260,7 @@ public class SpectrumView extends View implements OnTouchListener {
 			waterfall.setPixel(i, cy + HEIGHT, pixel_value);
 			*/
 			previous = sample;
-			average+=samples[i];
+			average -= (samples[i] & 0xFF);
 		}
 
 		this.filterLow = filterLow;
@@ -275,7 +275,7 @@ public class SpectrumView extends View implements OnTouchListener {
 		if (renderer != null && mGLSurfaceView != null){
 			final byte[] bitmap = new byte[WIDTH*4];	// RBGA
 			for (int i = 0; i < WIDTH; i++){
-				bitmap[i*4] = bitmap[i*4+1] = bitmap[i*4+2] = bitmap[i*4+3] = samples[i];
+				bitmap[i*4] = samples[i];
 			}
             mGLSurfaceView.queueEvent(new Runnable() {
                 // This method will be called on the rendering
