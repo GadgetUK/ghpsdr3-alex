@@ -51,7 +51,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private float _cy;
 	private int cy;
 	private float _LO_offset;
-	private float _width = (float)640 / MAX_CL_WIDTH;
+	private float _width = (float)720 / MAX_CL_WIDTH;
 	private float _waterfallLow;
 	private float _waterfallHigh;
 	private int spectrumTexture_location;
@@ -64,13 +64,12 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int aPosition_location;
 	private int textureCoord_location;
 	
-	private IntBuffer pixelBuffer;
-    private ShortBuffer mIndices;
+    	private ShortBuffer mIndices;
     
-    private final short[] mIndicesData =
-    { 
+    	private final short[] mIndicesData =
+    	{ 
             0, 1, 2, 0, 2, 3 
-    };
+    	};
     
 
 	
@@ -84,7 +83,6 @@ class Renderer implements GLSurfaceView.Renderer {
 		shader = new Shader();
 		mIndices = ByteBuffer.allocateDirect(mIndicesData.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
 		mIndices.put(mIndicesData).position(0);
-		pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 	}
 
 	/*****************************
@@ -99,6 +97,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void set_width(int width){
 		_width = (float)width/MAX_CL_WIDTH;
+		if (_width > 1.0) _width = 1.0;
 		GLES20.glUniform1f(width_location, _width);
 	}
 	
@@ -139,9 +138,9 @@ class Renderer implements GLSurfaceView.Renderer {
 		            -0.5f, -0.5f, 1.0f, // Position 1
 		            0.0f, 1.0f, // TexCoord 1
 		            0.5f, -0.5f, 1.0f, // Position 2
-		            1.0f, 1.0f, // TexCoord 2
+		            _width, 1.0f, // TexCoord 2
 		            0.5f, 0.5f, 1.0f, // Position 3
-		            1.0f, 0.0f // TexCoord 3
+		            _width, 0.0f // TexCoord 3
 		    };
 		
 	    FloatBuffer mVertices;
@@ -265,11 +264,13 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	public void plotWaterfall(final byte[] bitmap) {
 		ByteBuffer buffer = ByteBuffer.wrap(bitmap);
+		int width = bitmap.length/4;
+		if (width > MAX_CL_WIDTH) width = MAX_CL_WIDTH;
 		try{
 	        // Bind the texture
 	        GLES20.glActiveTexture ( GLES20.GL_TEXTURE0 );
 	        GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, spectrumTex );
-			GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, bitmap.length/4, 1, 
+			GLES20.glTexSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, cy, width, 1, 
 				GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
 			//checkGlError("glTexSubImage2D");
 		} catch (Exception e){
