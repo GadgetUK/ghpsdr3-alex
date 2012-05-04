@@ -38,7 +38,7 @@ class Renderer implements GLSurfaceView.Renderer {
 	private float[] mScaleMatrix = new float[16];   // scaling
 	private float[] mVMatrix = new float[16]; 		// modelview
 
-	private final int MAX_CL_WIDTH = 1024;
+	private final int MAX_CL_WIDTH = 2048;
 	private final int MAX_CL_HEIGHT = 512;
 	
 	private Context mContext;
@@ -52,6 +52,8 @@ class Renderer implements GLSurfaceView.Renderer {
 	private int cy;
 	private float _LO_offset;
 	private float _width = (float)720 / MAX_CL_WIDTH;
+	private float width;
+	private float height;
 	private float _waterfallLow;
 	private float _waterfallHigh;
 	private int spectrumTexture_location;
@@ -133,13 +135,13 @@ class Renderer implements GLSurfaceView.Renderer {
 		
 		float[] mVerticesData =
 		    { 
-		            -0.5f, 0.5f, 1.0f, // Position 0
+		            0.0f, 0.0f, 1.0f, // Position 0
 		            _width, 0.0f, // TexCoord 0
-		            -0.5f, -0.5f, 1.0f, // Position 1
+		            0.0f, this.height/2.0f, 1.0f, // Position 1
 		            _width, 1.0f, // TexCoord 1
-		            0.5f, -0.5f, 1.0f, // Position 2
+		            this.width, this.height/2.0f, 1.0f, // Position 2
 		            0.0f, 1.0f, // TexCoord 2
-		            0.5f, 0.5f, 1.0f, // Position 3
+		            this.width, 0.0f, 1.0f, // Position 3
 		            0.0f, 0.0f // TexCoord 3
 		    };
 		
@@ -176,13 +178,24 @@ class Renderer implements GLSurfaceView.Renderer {
 	 */
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
 		GLES20.glViewport(0, 0, width, height);
+		this.width = width;
+		this.height = height;
+		
+		/*
 		float ratio = (float) width / height;
 		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 0.5f, 10);
-
+		*/
+		
+		// Ortho2D Projection
+		mProjMatrix = new float []{ 2.0f/this.width, 0.0f, 0.0f, 0.0f,
+						0.0f, 2.0f/this.height, 0.0f, 0.0f,
+						0.0f, 0.0f, 1.0f, -1.0f,
+						0.0f, 0.0f, 0.0f, 1.0f
+						};
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
-		Matrix.scaleM(mScaleMatrix, 0, 15.7f, 11.0f, 1.0f);
-		Matrix.translateM(mScaleMatrix, 0, 0.0f, -0.6f, 0.0f);
+		Matrix.scaleM(mScaleMatrix, 0, 7.0f, -5.8f, 1.0f);
+		Matrix.translateM(mScaleMatrix, 0, -this.width/2.0f, this.height/11.5f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -240,16 +253,7 @@ class Renderer implements GLSurfaceView.Renderer {
         //checkGlError("GenTextures");
         // Bind the texture object
         GLES20.glBindTexture ( GLES20.GL_TEXTURE_2D, textureId[0] );
-	    
-        for (int i = 0; i < MAX_CL_HEIGHT; i++){
-        	for (int j = 0; j < MAX_CL_WIDTH; j++){
-        		pixelBuffer.put((byte) 0xff);
-        		pixelBuffer.put((byte) 0x00);
-        		pixelBuffer.put((byte) 0x00);
-        		pixelBuffer.put((byte) 0xff);
-        	}
-        }
-        pixelBuffer.position(0);
+
         //  Load the texture
         GLES20.glTexImage2D ( GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, MAX_CL_WIDTH, 
         		MAX_CL_HEIGHT, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuffer);
