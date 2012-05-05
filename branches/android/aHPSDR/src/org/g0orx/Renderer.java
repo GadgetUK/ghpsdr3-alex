@@ -195,7 +195,7 @@ class Renderer implements GLSurfaceView.Renderer {
 		// scaling
 		Matrix.setIdentityM(mScaleMatrix, 0);
 		Matrix.scaleM(mScaleMatrix, 0, 7.0f, -5.8f, 1.0f);
-		Matrix.translateM(mScaleMatrix, 0, -this.width/2.0f, this.height/11.5f, 0.0f);
+		Matrix.translateM(mScaleMatrix, 0, -this.width/2.0f, this.height/11.0f, 0.0f);
 		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mScaleMatrix, 0);
 		// Creating MVP matrix
 		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -267,9 +267,9 @@ class Renderer implements GLSurfaceView.Renderer {
 	
 	
 	public void plotWaterfall(final byte[] bitmap) {
-		ByteBuffer buffer = ByteBuffer.wrap(bitmap);
 		int width = bitmap.length/4;
-		if (width > MAX_CL_WIDTH) width = MAX_CL_WIDTH;
+		if (width > MAX_CL_WIDTH) width = MAX_CL_WIDTH;		
+		ByteBuffer buffer = ByteBuffer.wrap(bitmap);
 		try{
 	        // Bind the texture
 	        GLES20.glActiveTexture ( GLES20.GL_TEXTURE0 );
