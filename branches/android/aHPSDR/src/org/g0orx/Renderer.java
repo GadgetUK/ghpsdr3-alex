@@ -248,6 +248,16 @@ class Renderer implements GLSurfaceView.Renderer {
 		int[] textureId = new int[1];
         ByteBuffer pixelBuffer = ByteBuffer.allocateDirect(MAX_CL_WIDTH * MAX_CL_HEIGHT * 4);
         pixelBuffer.position(0);
+        for (int i = 0; i < MAX_CL_HEIGHT; i++){
+        	for (int j = 0; j < MAX_CL_WIDTH; j++){
+        		pixelBuffer.put((byte)0xff);
+        		pixelBuffer.put((byte)0);
+        		pixelBuffer.put((byte)0);
+        		pixelBuffer.put((byte)0);
+        	}
+        }
+        pixelBuffer.position(0);
+        
         //  Generate a texture object
         GLES20.glGenTextures ( 1, textureId, 0 );
         //checkGlError("GenTextures");
