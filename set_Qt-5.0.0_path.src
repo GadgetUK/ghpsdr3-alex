@@ -1,3 +1,2 @@
-export PATH=/usr/local/Qt-5.0.0/bin:$PATH
-
+export PATH=/opt/qt5/bin:$PATH
 
