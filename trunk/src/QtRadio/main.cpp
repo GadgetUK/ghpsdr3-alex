@@ -23,10 +23,12 @@
 *
 */
 
+
+#include <QtCore>
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QApplication>
 #else
-//#include <QtGui/QApplication>
+#include <QtGui/QApplication>
 #endif
 
 #include "UI.h"
