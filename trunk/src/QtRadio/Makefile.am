@@ -8,8 +8,9 @@ include $(srcdir)/build-aux/autotroll.mk
 QtRadio_CXXFLAGS = $(QT_CXXFLAGS) $(AM_CXXFLAGS)
 QtRadio_CPPFLAGS = $(QT_ADDITIONAL_INCLUDE_PATH) $(QT_CPPFLAGS) $(AM_CPPFLAGS) -DGITREV="\"$(GITSTR)\""
 
-QtRadio_LDFLAGS  = $(QT_LDFLAGS) $(LDFLAGS) $(QT_ADDITIONAL_LDFLAG) 
-QtRadio_LDADD    = $(QT_LIBS) $(LDADD) -lQtOpenGL -lGLU
+
+QtRadio_LDFLAGS  = $(QT_LDFLAGS) $(LDFLAGS) $(QT_ADDITIONAL_LDFLAG) -lQtOpenGL -lGLU
+QtRadio_LDADD    = $(QT_LIBS) $(LDADD) $(QtRadio_LDFLAGS)
 
 # For a program:
 bin_PROGRAMS = QtRadio
