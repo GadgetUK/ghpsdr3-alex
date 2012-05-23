@@ -27,14 +27,17 @@ public class SpectrumView extends View implements OnTouchListener {
 		WIDTH = width;
 		HEIGHT = height;
 		points = new float[WIDTH * 4];
-		average= -80;
+		average= -100;
 		cy = MAX_CL_HEIGHT - 1;
-		average=waterfallLow;
 		this.setOnTouchListener(this);
 	}
 
 	public void setConnection(Connection connection) {
 		this.connection=connection;	
+	}
+	
+	public void setAverage(int a){
+		average = a;
 	}
 	
 	void setSensors(float sensor1,float sensor2,float sensor3) {
@@ -224,7 +227,7 @@ public class SpectrumView extends View implements OnTouchListener {
 
 		average = (int) ((float)average * 0.98f + (float)sum / WIDTH * 0.02f);
 		waterfallLow= average -15;
-		waterfallHigh=waterfallLow+55;
+		waterfallHigh=average + 45;
 		
 		
 		if (renderer != null && mGLSurfaceView != null){
@@ -414,7 +417,7 @@ public class SpectrumView extends View implements OnTouchListener {
 	private boolean scroll;
 	private boolean jog;
 	
-	private int average;
+	private int average = -100;
 	
 	private Timer timer;
 	private long jogAmount;

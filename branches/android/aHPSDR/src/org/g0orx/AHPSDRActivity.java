@@ -181,6 +181,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 		
 		//update=new Update(connection);
 		//update.setFps(fps);
+		spectrumView.setAverage(-100);
 		connection.setFps(fps);
 		connection.getSpectrum_protocol3(fps+1);
 	}
@@ -265,6 +266,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 					connection.setAGC(agc);
 					//update=new Update(connection);					
 					spectrumView.setConnection(connection);
+					spectrumView.setAverage(-100);
 					//update.setFps(fps);
 					connection.setFps(fps);
 					connection.getSpectrum_protocol3(fps+1);
@@ -348,6 +350,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
     							connection.setAGC(agc);
     							//update=new Update(connection);					
     							spectrumView.setConnection(connection);
+    							spectrumView.setAverage(-100);
     							//update.setFps(fps);
     							//update.start();
     							setTitle("aHPSDRgl: "+server+" (rx"+receiver+")");
@@ -387,6 +390,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 							connection.setAGC(agc);
 							//update=new Update(connection);					
 							spectrumView.setConnection(connection);
+							spectrumView.setAverage(-100);
 							//update.setFps(fps);
 							connection.setFps(fps);
 							//update.start();
@@ -474,6 +478,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 						}
 					});
 			dialog = builder.create();
+			spectrumView.setAverage(-100);
 			break;
                 case MENU_FREQUENCY:
                         builder = new AlertDialog.Builder(this);
@@ -489,6 +494,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
                                 }
                         });
                         dialog = builder.create();
+            			spectrumView.setAverage(-100);
                         //builder.show();
                         break;
 		case MENU_MODE:
@@ -541,6 +547,7 @@ public class AHPSDRActivity extends Activity implements SensorEventListener {
 						}
 					});
 			dialog = builder.create();
+			spectrumView.setAverage(-100);
 			break;
 		case MENU_FILTER:
 			builder = new AlertDialog.Builder(this);
