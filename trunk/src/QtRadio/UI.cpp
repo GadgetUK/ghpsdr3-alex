@@ -60,6 +60,7 @@
 #include "codec2.h"
 #include "servers.h"
 #include "ctl.h"
+#include "morse.h"
 
 UI::UI(const QString server) {
 
@@ -2396,3 +2397,10 @@ void UI::testButtonClick(bool state)
      widget.spectrumFrame->setBandLimits(limits.min() + loffset,limits.max()+loffset);
      qDebug()<<"loffset = "<<loffset;
  }
+
+void UI::on_actionCwSettings_triggered()
+{
+  qDebug() << __FUNCTION__ << "arrived at on_actionCwSettings_triggered()";
+              cwSettings = new Morse(this);
+              cwSettings->show();
+}

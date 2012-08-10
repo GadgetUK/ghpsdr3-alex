@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     Audioinput.cpp\
     servers.cpp \
     G711A.cpp \
-    RTP.cpp
+    RTP.cpp \
+    morse.cpp
 
 
 HEADERS  += \ 
@@ -134,7 +135,8 @@ HEADERS  += \
     servers.h \
     G711A.h \
     RTP.h \
-    cusdr_queue.h
+    cusdr_queue.h \
+    morse.h
 
 FORMS    += \   
     UI.ui \
@@ -147,7 +149,8 @@ FORMS    += \
     KeypadDialog.ui \
     vfo.ui \
     ctl.ui \
-    servers.ui
+    servers.ui \
+    morse.ui
 
 OTHER_FILES +=
 

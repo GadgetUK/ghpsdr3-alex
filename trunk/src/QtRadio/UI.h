@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   UI.h
  * Author: John Melton, G0ORX/N6LYT
  *
@@ -71,6 +71,7 @@
 #include "ctl.h"
 #include "G711A.h"
 #include "RTP.h"
+#include "morse.h"
 
 
 #define DSPSERVER_BASE_PORT 8000
@@ -279,6 +280,9 @@ protected:
 //    void paintEvent(QPaintEvent*);
     void resizeEvent(QResizeEvent *);
 
+private slots:
+    void on_actionCwSettings_triggered();
+
 private:
     void printWindowTitle(QString message);
     QLabel modeInfo;
@@ -392,6 +396,7 @@ private:
     bool chkTX;
     double loffset;
     bool protocol3;
+    Morse *cwSettings;
 };
 
 #endif	/* _UI_H */
