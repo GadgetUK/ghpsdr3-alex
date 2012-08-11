@@ -2403,4 +2403,6 @@ void UI::on_actionCwSettings_triggered()
   qDebug() << __FUNCTION__ << "arrived at on_actionCwSettings_triggered()";
               cwSettings = new Morse(this);
               cwSettings->show();
+//              cwSettings->layout()->setSizeConstraint(QLayout::SetFixedSize);
+              cwSettings->setFixedSize(600, 471);
 }
