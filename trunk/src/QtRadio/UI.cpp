@@ -2400,8 +2400,11 @@ void UI::testButtonClick(bool state)
 
 void UI::on_actionCwSettings_triggered()
 {
+  QSettings settings("G0ORX", "QtRadio");
+
   qDebug() << __FUNCTION__ << "arrived at on_actionCwSettings_triggered()";
               cwSettings = new Morse(this);
+              cwSettings->readSettings(&settings);
               cwSettings->show();
 //              cwSettings->layout()->setSizeConstraint(QLayout::SetFixedSize);
               cwSettings->setFixedSize(600, 471);
