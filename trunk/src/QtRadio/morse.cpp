@@ -2,15 +2,15 @@
 #include "ui_morse.h"
 #include <QDebug>
 #include <cctype>
-#include "Mode.h"
-#include "UI.h"
+//#include "Mode.h"
+//#include "UI.h"
 
 Morse::Morse(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::Morse)
 {
   ui->setupUi(this);
-
+  cwMode = false;
 }
 
 Morse::~Morse()
@@ -25,6 +25,8 @@ void Morse::readSettings(QSettings *settings)
     ui->plainTextEdit_1->setPlainText(settings->value("cwString1","CQ CQ CQ DE ZL2APV ZL2APV ZL2APV K").toString());
     ui->plainTextEdit_2->setPlainText(settings->value("cwString2","CQ TEST DE ZL2APV ZL2APV K").toString());
     ui->plainTextEdit_3->setPlainText(settings->value("cwString3","TU QRZ DE ZL2APV").toString());
+    ui->plainTextEdit_4->setPlainText(settings->value("cwString4","OP GRAEME GRAEME").toString());
+    ui->plainTextEdit_5->setPlainText(settings->value("cwString5","QTH NEW PLYMOUTH  NEW PLYMOUTH").toString());
   settings->endGroup();
 }
 
@@ -34,6 +36,8 @@ void Morse::writeSettings(QSettings *settings)
     settings->setValue("cwString1", ui->plainTextEdit_1->toPlainText());
     settings->setValue("cwString2", ui->plainTextEdit_2->toPlainText());
     settings->setValue("cwString3", ui->plainTextEdit_3->toPlainText());
+    settings->setValue("cwString4", ui->plainTextEdit_4->toPlainText());
+    settings->setValue("cwString5", ui->plainTextEdit_5->toPlainText());
     settings->setValue("cwPosition", this->geometry());
     settings->endGroup();
 }
@@ -156,11 +160,10 @@ Morse::charFrame Morse::ascii2cw(char letter) // convert an ASCII code to a Mors
 
 void Morse::keyPressEvent(QKeyEvent *event)
 {
-  int keyOffset, currentMode;
+  int keyOffset;
 
-  currentMode = MODE_LSB;
   keyOffset = Qt::Key_F1 - 1;
-  if ((currentMode==MODE_CWL)||(currentMode==MODE_CWU)) {
+  if (cwMode) {
 //  if ((UI::mode.getMode()==MODE_CWL)||(UI::mode.getMode()==MODE_CWU)) {
   switch (event->key()) {
     case Qt::Key_F2:

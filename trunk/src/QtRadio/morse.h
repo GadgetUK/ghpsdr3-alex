@@ -15,10 +15,12 @@ class Morse : public QDialog
 public:
   explicit Morse(QWidget *parent = 0);
   ~Morse();
-// Functions
+// Public Functions
   void readSettings(QSettings* settings);
   void writeSettings(QSettings* settings);
   void keyPressEvent(QKeyEvent *event);
+// Public Variables
+  bool cwMode;
 
 private slots:
 
@@ -31,6 +33,7 @@ private:
 // Functions
   charFrame ascii2cw(char letter);
   int sendBuffer(int editBox);
+
 };
 
 #endif // MORSE_H

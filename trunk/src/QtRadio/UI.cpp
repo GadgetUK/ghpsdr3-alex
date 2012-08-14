@@ -1128,9 +1128,12 @@ void UI::modeChanged(int previousMode,int newMode) {
     switch(previousMode) {
         case MODE_CWL:
             widget.actionCWL->setChecked(FALSE);
+            cwSettings->cwMode = false;
+
             break;
         case MODE_CWU:
             widget.actionCWU->setChecked(FALSE);
+            cwSettings->cwMode = false;
             break;
         case MODE_LSB:
             widget.actionLSB->setChecked(FALSE);
@@ -1163,10 +1166,12 @@ void UI::modeChanged(int previousMode,int newMode) {
         case MODE_CWL:
             widget.actionCWL->setChecked(TRUE);
             filters.selectFilters(&cwlFilters);
+            cwSettings->cwMode = true;
             break;
         case MODE_CWU:
             widget.actionCWU->setChecked(TRUE);
             filters.selectFilters(&cwuFilters);
+            cwSettings->cwMode = true;
             break;
         case MODE_LSB:
             widget.actionLSB->setChecked(TRUE);
@@ -2414,14 +2419,12 @@ void UI::on_actionCwSettings_triggered()
 void UI::keyPressEvent(QKeyEvent *event)
 {
   if (cwSettings->isVisible()) {
-      qDebug() << "Arrived at UI::keyPressEvent";
     switch (event->key()) {
       case Qt::Key_F2:
       case Qt::Key_F3:
       case Qt::Key_F4:
       case Qt::Key_F5:
       case Qt::Key_F6:
-        qDebug() << "One of the function keys was pressed from UI";
         cwSettings->keyPressEvent(event);
     }
   }
