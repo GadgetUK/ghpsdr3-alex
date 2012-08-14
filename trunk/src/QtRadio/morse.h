@@ -21,10 +21,14 @@ public:
   
 private slots:
 
-  void on_pbSave_1_clicked();
-
 private:
   Ui::Morse *ui;
+  struct charFrame {
+    unsigned char elementCount;
+    unsigned char letterCode;
+  };
+// Functions
+  charFrame ascii2cw(char letter);
 };
 
 #endif // MORSE_H

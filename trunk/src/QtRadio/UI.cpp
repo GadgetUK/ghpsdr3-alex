@@ -101,6 +101,7 @@ UI::UI(const QString server) {
     dspversion = 0;
     dspversiontxt = "Unknown";
     chkTX = false;
+    cwSettings = new Morse(this); //CW settings has UI as parent so it closes with UI close
 
     // layout the screen
     widget.gridLayout->setContentsMargins(0,0,0,0);
@@ -398,6 +399,7 @@ void UI::loadSettings() {
     settings.endGroup();
 
     widget.vfoFrame->readSettings(&settings);
+    cwSettings->readSettings(&settings);
 }
 
 void UI::saveSettings() {
@@ -427,6 +429,7 @@ void UI::saveSettings() {
     settings.endGroup();
 
     widget.vfoFrame->writeSettings(&settings);
+    cwSettings->writeSettings(&settings);
 }
 
 void UI::hostChanged(QString host) {
@@ -2403,9 +2406,7 @@ void UI::on_actionCwSettings_triggered()
   QSettings settings("G0ORX", "QtRadio");
 
   qDebug() << __FUNCTION__ << "arrived at on_actionCwSettings_triggered()";
-              cwSettings = new Morse(this);
-              cwSettings->readSettings(&settings);
-              cwSettings->show();
-//              cwSettings->layout()->setSizeConstraint(QLayout::SetFixedSize);
-              cwSettings->setFixedSize(600, 471);
+  cwSettings->setFixedSize(600, 471);
+//  cwSettings->readSettings(&settings);
+  cwSettings->show();
 }
