@@ -2410,3 +2410,19 @@ void UI::on_actionCwSettings_triggered()
 //  cwSettings->readSettings(&settings);
   cwSettings->show();
 }
+
+void UI::keyPressEvent(QKeyEvent *event)
+{
+  if (cwSettings->isVisible()) {
+      qDebug() << "Arrived at UI::keyPressEvent";
+    switch (event->key()) {
+      case Qt::Key_F2:
+      case Qt::Key_F3:
+      case Qt::Key_F4:
+      case Qt::Key_F5:
+      case Qt::Key_F6:
+        qDebug() << "One of the function keys was pressed from UI";
+        cwSettings->keyPressEvent(event);
+    }
+  }
+}

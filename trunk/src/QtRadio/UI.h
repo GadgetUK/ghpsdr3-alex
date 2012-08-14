@@ -103,6 +103,7 @@ public:
     void rigctlSetVFOB();
     void rigctlSetFreq(long long f);
     void rigctlSetMode(int newmode);
+    Mode mode;
 
 signals:
     void initialize_audio(int length);
@@ -330,7 +331,7 @@ private:
     bool connection_valid;
 
     Band band;
-    Mode mode;
+//    Mode mode;
     Filters filters;
     CWLFilters cwlFilters;
     CWUFilters cwuFilters;
@@ -397,6 +398,7 @@ private:
     double loffset;
     bool protocol3;
     Morse *cwSettings;
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif	/* _UI_H */

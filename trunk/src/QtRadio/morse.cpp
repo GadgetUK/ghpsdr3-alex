@@ -2,6 +2,8 @@
 #include "ui_morse.h"
 #include <QDebug>
 #include <cctype>
+#include "Mode.h"
+#include "UI.h"
 
 Morse::Morse(QWidget *parent) :
   QDialog(parent),
@@ -146,8 +148,71 @@ Morse::charFrame Morse::ascii2cw(char letter) // convert an ASCII code to a Mors
       ltr.elementCount = 4; ltr.letterCode = 0xC0; break; // 11000000 Z
     case 0x5f:
       ltr.elementCount = 6; ltr.letterCode = 0x34; break; // 00110100 _
-
-
+    default:
+      ltr.elementCount = 0xff; ltr.letterCode = 0xff; // Error code to show invalid char
   }
   return ltr;
+}
+
+void Morse::keyPressEvent(QKeyEvent *event)
+{
+  int keyOffset, currentMode;
+
+  currentMode = MODE_LSB;
+  keyOffset = Qt::Key_F1 - 1;
+  if ((currentMode==MODE_CWL)||(currentMode==MODE_CWU)) {
+//  if ((UI::mode.getMode()==MODE_CWL)||(UI::mode.getMode()==MODE_CWU)) {
+  switch (event->key()) {
+    case Qt::Key_F2:
+    case Qt::Key_F3:
+    case Qt::Key_F4:
+    case Qt::Key_F5:
+    case Qt::Key_F6:
+      event->accept();
+      sendBuffer(event->key() - keyOffset);
+      qDebug() << __FUNCTION__ << "The key pressed was F" << event->key()-keyOffset;
+      break;
+    }
+  }
+}
+
+int Morse::sendBuffer(int editBox)
+{
+  QString buff;
+  charFrame ltr;
+  char currentLetter;
+
+  switch (editBox) {
+    case 1:
+      buff = ui->plainTextEdit->toPlainText();
+      break;
+    case 2:
+      buff = ui->plainTextEdit_1->toPlainText();
+      break;
+    case 3:
+      buff = ui->plainTextEdit_2->toPlainText();
+      break;
+    case 4:
+      buff = ui->plainTextEdit_3->toPlainText();
+    break;
+    case 5:
+      buff = ui->plainTextEdit_4->toPlainText();
+    break;
+    case 6:
+      buff = ui->plainTextEdit_5->toPlainText();
+    break;
+    default:
+      buff.clear();
+  }
+  qDebug()<<__FUNCTION__ << buff;
+  if (buff.isEmpty()) {
+    return 1;
+  } else {
+      for (int x = 0; x<buff.length();x++) {
+      currentLetter = buff[x].toAscii();
+      ltr = ascii2cw(currentLetter);
+      qDebug()<<__FUNCTION__<<"Letter processed = "<<currentLetter<<", "<<ltr.elementCount<<", "<<ltr.letterCode;
+    }
+    return 0;
+  }
 }
