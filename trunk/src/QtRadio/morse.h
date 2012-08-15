@@ -33,7 +33,11 @@ private:
 // Functions
   charFrame ascii2cw(char letter);
   int sendBuffer(int editBox);
-
+  void sendDit();
+  void sendDah();
+  void sendElSpace();
+  void sendLetterSpace();
+  void sendWordSpace();
 };
 
 #endif // MORSE_H

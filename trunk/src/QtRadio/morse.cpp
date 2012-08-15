@@ -184,6 +184,8 @@ int Morse::sendBuffer(int editBox)
   QString buff;
   charFrame ltr;
   char currentLetter;
+  bool curElement; // false = dit, true = dah
+  bool wordspaceFlag = false;
 
   switch (editBox) {
     case 1:
@@ -207,15 +209,57 @@ int Morse::sendBuffer(int editBox)
     default:
       buff.clear();
   }
-  qDebug()<<__FUNCTION__ << buff;
   if (buff.isEmpty()) {
     return 1;
   } else {
       for (int x = 0; x<buff.length();x++) {
-      currentLetter = buff[x].toAscii();
-      ltr = ascii2cw(currentLetter);
-      qDebug()<<__FUNCTION__<<"Letter processed = "<<currentLetter<<", "<<ltr.elementCount<<", "<<ltr.letterCode;
+        currentLetter = buff[x].toAscii();
+        ltr = ascii2cw(currentLetter);
+        if (x) { // Don't send a leading letter or word space first time through.
+            if (ltr.elementCount == 7) {
+              sendWordSpace(); // Only space has 7 elements
+              wordspaceFlag = true; // Indicate we have sent a wordspace so we don't send a letter space as well
+            } else {
+                if (!wordspaceFlag) sendLetterSpace();
+                wordspaceFlag = false;
+            }
+        }
+        if (ltr.elementCount != 7) { // Don't send the actual word space elments
+            for (int cnt=0;cnt<ltr.elementCount;cnt++) {
+             curElement = (ltr.letterCode & 0x80); // Only work on the MSB of the 8 bit byte
+              ltr.letterCode = ltr.letterCode << 1; // Shift the next bit down to be MSB
+          // Transmit current element as either dit or dah
+              if (curElement) sendDah(); else sendDit();
+          // Calculate if element space is to be sent
+              if (cnt<(ltr.elementCount-1)) sendElSpace();
+            }
+        }
+      }
+      return 0;
     }
-    return 0;
-  }
+}
+
+void Morse::sendDit()
+{
+  qDebug()<<Q_FUNC_INFO<<"Dit sent";
+}
+
+void Morse::sendDah()
+{
+  qDebug()<<Q_FUNC_INFO<<"Dah sent";
+}
+
+void Morse::sendElSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Element space sent";
+}
+
+void Morse::sendLetterSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Letter Space sent";
+}
+
+void Morse::sendWordSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Word space sent";
 }
