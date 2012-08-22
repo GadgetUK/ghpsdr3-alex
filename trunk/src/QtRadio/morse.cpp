@@ -1,48 +1,82 @@
+/* File:   Morse.cpp
+ * Author: Graeme Jury, ZL2APV
+ *
+ * Created on 16 August 2012, 20:00
+ */
+
+/* Copyright (C)
+* 2012 - Graeme Jury, ZL2APV
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+*/
+
 #include "morse.h"
 #include "ui_morse.h"
 #include <QDebug>
 #include <cctype>
-//#include "Mode.h"
-//#include "UI.h"
+#include <QThread>
 
-Morse::Morse(QWidget *parent) :
-  QDialog(parent),
-  ui(new Ui::Morse)
+
+Send_Elements::Send_Elements(QObject *parent) :
+  QObject(parent)
 {
-  ui->setupUi(this);
-  cwMode = false;
+  test = 99;
 }
 
-Morse::~Morse()
+void Send_Elements::doElements(QString buff)
 {
-  delete ui;
+  char currentLetter;
+  bool curElement; // false = dit, true = dah
+  bool wordspaceFlag = false;
+//  charFrame ltr;
+  charFrame ltr;
+
+  for (int x = 0; x<buff.length();x++) {
+    currentLetter = buff[x].toAscii();
+//    ltr = ascii2cw(currentLetter);
+    ltr = ascii2cw(currentLetter);
+    if (x) { // Don't send a leading letter or word space first time through.
+        if (ltr.elementCount == 7) {
+          sendWordSpace(); // Only space has 7 elements
+          wordspaceFlag = true; // Indicate we have sent a wordspace so we don't send a letter space as well
+        } else {
+            if (!wordspaceFlag) sendLetterSpace();
+            wordspaceFlag = false;
+        }
+    }
+    if (ltr.elementCount != 7) { // Don't send the actual word space elments
+        for (int cnt=0;cnt<ltr.elementCount;cnt++) {
+         curElement = (ltr.letterCode & 0x80); // Only work on the MSB of the 8 bit byte
+          ltr.letterCode = ltr.letterCode << 1; // Shift the next bit down to be MSB
+      // Transmit current element as either dit or dah
+          if (curElement) sendDah(); else sendDit();
+      // Calculate if element space is to be sent
+          if (cnt<(ltr.elementCount-1)) sendElSpace();
+        }
+    }
+  }
+//  qDebug()<<"At the doElements() routine";
+//  for(int x=0;x<5;x++) {
+//      qDebug()<<"Value of test = "<<test;
+//      sleep(1);
+  //    }
 }
 
-void Morse::readSettings(QSettings *settings)
-{
-  settings->beginGroup("cw");
-    setGeometry(settings->value("cwPosition",this->geometry()).toRect());
-    ui->plainTextEdit_1->setPlainText(settings->value("cwString1","CQ CQ CQ DE ZL2APV ZL2APV ZL2APV K").toString());
-    ui->plainTextEdit_2->setPlainText(settings->value("cwString2","CQ TEST DE ZL2APV ZL2APV K").toString());
-    ui->plainTextEdit_3->setPlainText(settings->value("cwString3","TU QRZ DE ZL2APV").toString());
-    ui->plainTextEdit_4->setPlainText(settings->value("cwString4","OP GRAEME GRAEME").toString());
-    ui->plainTextEdit_5->setPlainText(settings->value("cwString5","QTH NEW PLYMOUTH  NEW PLYMOUTH").toString());
-  settings->endGroup();
-}
-
-void Morse::writeSettings(QSettings *settings)
-{
-  settings->beginGroup("cw");
-    settings->setValue("cwString1", ui->plainTextEdit_1->toPlainText());
-    settings->setValue("cwString2", ui->plainTextEdit_2->toPlainText());
-    settings->setValue("cwString3", ui->plainTextEdit_3->toPlainText());
-    settings->setValue("cwString4", ui->plainTextEdit_4->toPlainText());
-    settings->setValue("cwString5", ui->plainTextEdit_5->toPlainText());
-    settings->setValue("cwPosition", this->geometry());
-    settings->endGroup();
-}
-
-Morse::charFrame Morse::ascii2cw(char letter) // convert an ASCII code to a Morse value
+Send_Elements::charFrame Send_Elements::ascii2cw(char letter)
+//Send_Elements::charFrame Send_Elements::charFrame::ascii2cw(char)
+//Morse::charFrame Morse::ascii2cw(char letter) // convert an ASCII code to a Morse value
 {
   charFrame ltr;
 
@@ -158,11 +192,84 @@ Morse::charFrame Morse::ascii2cw(char letter) // convert an ASCII code to a Mors
   return ltr;
 }
 
+void Send_Elements::sendDit()
+{
+  qDebug()<<Q_FUNC_INFO<<"Dit sent";
+  sleep(1);
+}
+
+void Send_Elements::sendDah()
+{
+  qDebug()<<Q_FUNC_INFO<<"Dah sent";
+  sleep(1);
+}
+
+void Send_Elements::sendElSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Element space sent";
+}
+
+void Send_Elements::sendLetterSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Letter space sent";
+}
+
+void Send_Elements::sendWordSpace()
+{
+  qDebug()<<Q_FUNC_INFO<<"Word space sent";
+}
+
+Morse::Morse(QWidget *parent) :
+  QDialog(parent),
+  ui(new Ui::Morse)
+{
+  setGeometry(500,150,600,471);
+  ui->setupUi(this);
+  cwMode = false;
+  QThread *cwThread = new QThread;
+  Send_Elements *sendEl = new Send_Elements;
+  connect(this,SIGNAL(doWork(QString)),sendEl,SLOT(doElements(QString)));
+  sendEl->moveToThread(cwThread);
+  cwThread->start();
+}
+
+Morse::~Morse()
+{
+  delete ui;
+}
+
+void Morse::readSettings(QSettings *settings)
+{
+  settings->beginGroup("cw");
+    setGeometry(settings->value("cwPosition",this->geometry()).toRect());
+    ui->plainTextEdit_1->setPlainText(settings->value("cwString1","CQ CQ CQ DE ZL2APV ZL2APV ZL2APV K").toString());
+    ui->plainTextEdit_2->setPlainText(settings->value("cwString2","CQ TEST DE ZL2APV ZL2APV K").toString());
+    ui->plainTextEdit_3->setPlainText(settings->value("cwString3","TU QRZ DE ZL2APV").toString());
+    ui->plainTextEdit_4->setPlainText(settings->value("cwString4","OP GRAEME GRAEME").toString());
+    ui->plainTextEdit_5->setPlainText(settings->value("cwString5","QTH NEW PLYMOUTH  NEW PLYMOUTH").toString());
+  settings->endGroup();
+}
+
+void Morse::writeSettings(QSettings *settings)
+{
+  settings->beginGroup("cw");
+    settings->setValue("cwString1", ui->plainTextEdit_1->toPlainText());
+    settings->setValue("cwString2", ui->plainTextEdit_2->toPlainText());
+    settings->setValue("cwString3", ui->plainTextEdit_3->toPlainText());
+    settings->setValue("cwString4", ui->plainTextEdit_4->toPlainText());
+    settings->setValue("cwString5", ui->plainTextEdit_5->toPlainText());
+    settings->setValue("cwPosition", this->geometry());
+    settings->endGroup();
+}
+
+
+
 void Morse::keyPressEvent(QKeyEvent *event)
 {
   int keyOffset;
 
   keyOffset = Qt::Key_F1 - 1;
+  qDebug()<<"Got here and keyOffset - "<<keyOffset;
   if (cwMode) {
 //  if ((UI::mode.getMode()==MODE_CWL)||(UI::mode.getMode()==MODE_CWU)) {
   switch (event->key()) {
@@ -182,7 +289,7 @@ void Morse::keyPressEvent(QKeyEvent *event)
 int Morse::sendBuffer(int editBox)
 {
   QString buff;
-  charFrame ltr;
+//  charFrame ltr;
   char currentLetter;
   bool curElement; // false = dit, true = dah
   bool wordspaceFlag = false;
@@ -212,54 +319,8 @@ int Morse::sendBuffer(int editBox)
   if (buff.isEmpty()) {
     return 1;
   } else {
-      for (int x = 0; x<buff.length();x++) {
-        currentLetter = buff[x].toAscii();
-        ltr = ascii2cw(currentLetter);
-        if (x) { // Don't send a leading letter or word space first time through.
-            if (ltr.elementCount == 7) {
-              sendWordSpace(); // Only space has 7 elements
-              wordspaceFlag = true; // Indicate we have sent a wordspace so we don't send a letter space as well
-            } else {
-                if (!wordspaceFlag) sendLetterSpace();
-                wordspaceFlag = false;
-            }
-        }
-        if (ltr.elementCount != 7) { // Don't send the actual word space elments
-            for (int cnt=0;cnt<ltr.elementCount;cnt++) {
-             curElement = (ltr.letterCode & 0x80); // Only work on the MSB of the 8 bit byte
-              ltr.letterCode = ltr.letterCode << 1; // Shift the next bit down to be MSB
-          // Transmit current element as either dit or dah
-              if (curElement) sendDah(); else sendDit();
-          // Calculate if element space is to be sent
-              if (cnt<(ltr.elementCount-1)) sendElSpace();
-            }
-        }
-      }
+      emit doWork(buff);
+
       return 0;
     }
-}
-
-void Morse::sendDit()
-{
-  qDebug()<<Q_FUNC_INFO<<"Dit sent";
-}
-
-void Morse::sendDah()
-{
-  qDebug()<<Q_FUNC_INFO<<"Dah sent";
-}
-
-void Morse::sendElSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Element space sent";
-}
-
-void Morse::sendLetterSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Letter Space sent";
-}
-
-void Morse::sendWordSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Word space sent";
 }

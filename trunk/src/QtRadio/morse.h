@@ -8,10 +8,36 @@ namespace Ui {
   class Morse;
 }
 
+class Send_Elements : public QObject
+{
+  Q_OBJECT
+public:
+  explicit Send_Elements(QObject *parent = 0);
+  int test;
+
+public slots:
+  void doElements(QString);
+
+private:
+  struct charFrame {
+    unsigned char elementCount;
+    unsigned char letterCode;
+  };
+  // Functions
+    charFrame ascii2cw(char letter);
+    void sendDit();
+    void sendDah();
+    void sendElSpace();
+    void sendLetterSpace();
+    void sendWordSpace();
+
+signals:
+};
+
 class Morse : public QDialog
 {
   Q_OBJECT
-  
+
 public:
   explicit Morse(QWidget *parent = 0);
   ~Morse();
@@ -26,18 +52,13 @@ private slots:
 
 private:
   Ui::Morse *ui;
-  struct charFrame {
-    unsigned char elementCount;
-    unsigned char letterCode;
-  };
+
 // Functions
-  charFrame ascii2cw(char letter);
+//  charFrame ascii2cw(char letter);
   int sendBuffer(int editBox);
-  void sendDit();
-  void sendDah();
-  void sendElSpace();
-  void sendLetterSpace();
-  void sendWordSpace();
+
+signals:
+  void doWork(QString);
 };
 
 #endif // MORSE_H
