@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QSettings>
 
+enum {_ditsp, _dahsp, _elesp, _ltrsp, _wrdsp};
+
 namespace Ui {
   class Morse;
 }
@@ -23,13 +25,9 @@ private:
     unsigned char elementCount;
     unsigned char letterCode;
   };
-  // Functions
+  // Private Functions
     charFrame ascii2cw(char letter);
-    void sendDit();
-    void sendDah();
-    void sendElSpace();
-    void sendLetterSpace();
-    void sendWordSpace();
+    void sendCW(int el_type);
 
 signals:
 };
@@ -53,8 +51,7 @@ private slots:
 private:
   Ui::Morse *ui;
 
-// Functions
-//  charFrame ascii2cw(char letter);
+// Private Functions
   int sendBuffer(int editBox);
 
 signals:

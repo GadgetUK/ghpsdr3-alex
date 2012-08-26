@@ -49,10 +49,10 @@ void Send_Elements::doElements(QString buff)
     ltr = ascii2cw(currentLetter);
     if (x) { // Don't send a leading letter or word space first time through.
         if (ltr.elementCount == 7) {
-          sendWordSpace(); // Only space has 7 elements
+          sendCW(_wrdsp); // Only space has 7 elements
           wordspaceFlag = true; // Indicate we have sent a wordspace so we don't send a letter space as well
         } else {
-            if (!wordspaceFlag) sendLetterSpace();
+            if (!wordspaceFlag) sendCW(_ltrsp);
             wordspaceFlag = false;
         }
     }
@@ -61,17 +61,12 @@ void Send_Elements::doElements(QString buff)
          curElement = (ltr.letterCode & 0x80); // Only work on the MSB of the 8 bit byte
           ltr.letterCode = ltr.letterCode << 1; // Shift the next bit down to be MSB
       // Transmit current element as either dit or dah
-          if (curElement) sendDah(); else sendDit();
+          if (curElement) sendCW(_dahsp); else sendCW(_ditsp);
       // Calculate if element space is to be sent
-          if (cnt<(ltr.elementCount-1)) sendElSpace();
+          if (cnt<(ltr.elementCount-1)) sendCW(_elesp);
         }
     }
   }
-//  qDebug()<<"At the doElements() routine";
-//  for(int x=0;x<5;x++) {
-//      qDebug()<<"Value of test = "<<test;
-//      sleep(1);
-  //    }
 }
 
 Send_Elements::charFrame Send_Elements::ascii2cw(char letter)
@@ -192,31 +187,15 @@ Send_Elements::charFrame Send_Elements::ascii2cw(char letter)
   return ltr;
 }
 
-void Send_Elements::sendDit()
+void Send_Elements::sendCW(int el_type)
 {
-  qDebug()<<Q_FUNC_INFO<<"Dit sent";
-  sleep(1);
-}
-
-void Send_Elements::sendDah()
-{
-  qDebug()<<Q_FUNC_INFO<<"Dah sent";
-  sleep(1);
-}
-
-void Send_Elements::sendElSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Element space sent";
-}
-
-void Send_Elements::sendLetterSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Letter space sent";
-}
-
-void Send_Elements::sendWordSpace()
-{
-  qDebug()<<Q_FUNC_INFO<<"Word space sent";
+  switch (el_type) {
+    case _ditsp:qDebug()<<Q_FUNC_INFO<<"Dit sent"; sleep(1); break;
+    case _dahsp:qDebug()<<Q_FUNC_INFO<<"Dah sent"; sleep(1); break;
+    case _elesp:qDebug()<<Q_FUNC_INFO<<"Element space sent"; break;
+    case _ltrsp:qDebug()<<Q_FUNC_INFO<<"Letter space sent";  break;
+    case _wrdsp:qDebug()<<Q_FUNC_INFO<<"Word space sent";    break;
+    }
 }
 
 Morse::Morse(QWidget *parent) :
