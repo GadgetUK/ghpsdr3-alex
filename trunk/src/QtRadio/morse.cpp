@@ -35,12 +35,11 @@ Send_Elements::Send_Elements(QObject *parent) :
   test = 99;
 }
 
-void Send_Elements::doElements(QString buff)
+void Send_Elements::doElements(QString buff, unsigned long elTime)
 {
   char currentLetter;
   bool curElement; // false = dit, true = dah
   bool wordspaceFlag = false;
-//  charFrame ltr;
   charFrame ltr;
 
   for (int x = 0; x<buff.length();x++) {
@@ -49,10 +48,10 @@ void Send_Elements::doElements(QString buff)
     ltr = ascii2cw(currentLetter);
     if (x) { // Don't send a leading letter or word space first time through.
         if (ltr.elementCount == 7) {
-          sendCW(_wrdsp); // Only space has 7 elements
+          sendCW(_wrdsp, elTime); // Only space has 7 elements
           wordspaceFlag = true; // Indicate we have sent a wordspace so we don't send a letter space as well
         } else {
-            if (!wordspaceFlag) sendCW(_ltrsp);
+            if (!wordspaceFlag) sendCW(_ltrsp, elTime);
             wordspaceFlag = false;
         }
     }
@@ -61,9 +60,9 @@ void Send_Elements::doElements(QString buff)
          curElement = (ltr.letterCode & 0x80); // Only work on the MSB of the 8 bit byte
           ltr.letterCode = ltr.letterCode << 1; // Shift the next bit down to be MSB
       // Transmit current element as either dit or dah
-          if (curElement) sendCW(_dahsp); else sendCW(_ditsp);
+          if (curElement) sendCW(_dahsp, elTime); else sendCW(_ditsp, elTime);
       // Calculate if element space is to be sent
-          if (cnt<(ltr.elementCount-1)) sendCW(_elesp);
+          if (cnt<(ltr.elementCount-1)) sendCW(_elesp, elTime);
         }
     }
   }
@@ -187,14 +186,14 @@ Send_Elements::charFrame Send_Elements::ascii2cw(char letter)
   return ltr;
 }
 
-void Send_Elements::sendCW(int el_type)
+void Send_Elements::sendCW(int el_type, unsigned long elTime)
 {
   switch (el_type) {
-    case _ditsp:qDebug()<<Q_FUNC_INFO<<"Dit sent"; sleep(1); break;
-    case _dahsp:qDebug()<<Q_FUNC_INFO<<"Dah sent"; sleep(1); break;
-    case _elesp:qDebug()<<Q_FUNC_INFO<<"Element space sent"; break;
-    case _ltrsp:qDebug()<<Q_FUNC_INFO<<"Letter space sent";  break;
-    case _wrdsp:qDebug()<<Q_FUNC_INFO<<"Word space sent";    break;
+    case _ditsp:qDebug()<<Q_FUNC_INFO<<"Dit sent";          usleep(elTime);   break;
+    case _dahsp:qDebug()<<Q_FUNC_INFO<<"Dah sent";          usleep(elTime*3); break;
+    case _elesp:qDebug()<<Q_FUNC_INFO<<"Element space sent";usleep(elTime);   break;
+    case _ltrsp:qDebug()<<Q_FUNC_INFO<<"Letter space sent"; usleep(elTime*3); break;
+    case _wrdsp:qDebug()<<Q_FUNC_INFO<<"Word space sent";   usleep(elTime*7); break;
     }
 }
 
@@ -205,9 +204,10 @@ Morse::Morse(QWidget *parent) :
   setGeometry(500,150,600,471);
   ui->setupUi(this);
   cwMode = false;
+  wpm = ui->spinBox_wpm->value();
   QThread *cwThread = new QThread;
   Send_Elements *sendEl = new Send_Elements;
-  connect(this,SIGNAL(doWork(QString)),sendEl,SLOT(doElements(QString)));
+  connect(this,SIGNAL(doWork(QString, unsigned long)),sendEl,SLOT(doElements(QString, unsigned long)));
   sendEl->moveToThread(cwThread);
   cwThread->start();
 }
@@ -268,11 +268,9 @@ void Morse::keyPressEvent(QKeyEvent *event)
 int Morse::sendBuffer(int editBox)
 {
   QString buff;
-//  charFrame ltr;
-  char currentLetter;
-  bool curElement; // false = dit, true = dah
-  bool wordspaceFlag = false;
+  unsigned long elTime;// todo temp value for cwTime remove when setup
 
+  elTime = 1200000/wpm;// time in nanoseconds todo temp value for cwTime remove when setup
   switch (editBox) {
     case 1:
       buff = ui->plainTextEdit->toPlainText();
@@ -298,8 +296,13 @@ int Morse::sendBuffer(int editBox)
   if (buff.isEmpty()) {
     return 1;
   } else {
-      emit doWork(buff);
+      emit doWork(buff, elTime);
 
       return 0;
     }
+}
+
+void Morse::on_spinBox_wpm_valueChanged(int arg1)
+{
+    wpm = arg1;
 }

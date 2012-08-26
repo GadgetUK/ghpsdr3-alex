@@ -18,7 +18,7 @@ public:
   int test;
 
 public slots:
-  void doElements(QString);
+  void doElements(QString, unsigned long);
 
 private:
   struct charFrame {
@@ -27,7 +27,7 @@ private:
   };
   // Private Functions
     charFrame ascii2cw(char letter);
-    void sendCW(int el_type);
+    void sendCW(int el_type, unsigned long elTime);
 
 signals:
 };
@@ -48,14 +48,17 @@ public:
 
 private slots:
 
+  void on_spinBox_wpm_valueChanged(int arg1);
+
 private:
   Ui::Morse *ui;
 
 // Private Functions
   int sendBuffer(int editBox);
-
+// Private variables
+  int wpm;
 signals:
-  void doWork(QString);
+  void doWork(QString, unsigned long);
 };
 
 #endif // MORSE_H
